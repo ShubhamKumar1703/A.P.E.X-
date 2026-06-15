@@ -3,7 +3,7 @@
 import React from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Cpu, Home, Calendar, Trophy, Activity, MessageSquare } from "lucide-react";
+import { Cpu, Home, Calendar, Trophy, Activity, MessageSquare, Sliders } from "lucide-react";
 
 interface SidebarLinkProps {
   href: string;
@@ -94,6 +94,12 @@ export function Sidebar() {
               icon={<MessageSquare size={16} />}
               label="AI Engineer"
               active={pathname.startsWith("/dashboard/engineer")}
+            />
+            <SidebarLink
+              href="/dashboard/sandbox"
+              icon={<Sliders size={16} />}
+              label="Strategy Sandbox"
+              active={pathname.startsWith("/dashboard/sandbox")}
             />
           </div>
         </div>

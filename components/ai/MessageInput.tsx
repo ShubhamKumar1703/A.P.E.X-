@@ -30,17 +30,19 @@ export function MessageInput({ value, onChange, onSubmit, disabled }: MessageInp
 
   return (
     <div className="relative border border-zinc-850 rounded-xl bg-zinc-950 p-2 flex items-end gap-2 focus-within:border-[#FF1801]/30 transition-all font-mono">
-      <textarea
-        ref={textareaRef}
-        rows={1}
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        onKeyDown={handleKeyDown}
-        placeholder={disabled ? "Strategy Engineer is formulating advice..." : "Ask about race delta, tyre degradation, undercut potential..."}
-        disabled={disabled}
-        className="flex-1 bg-transparent border-0 text-xs text-zinc-100 placeholder-zinc-550 focus:outline-none resize-none max-h-[120px] p-2 leading-relaxed min-w-0"
-        style={{ scrollbarWidth: "thin" }}
-      />
+      <div className="flex-1 min-w-0">
+        <textarea
+          ref={textareaRef}
+          rows={1}
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+          onKeyDown={handleKeyDown}
+          placeholder={disabled ? "Strategy Engineer is formulating advice..." : "Ask about race delta, tyre degradation, undercut potential..."}
+          disabled={disabled}
+          className="w-full bg-transparent border-0 text-xs text-zinc-100 placeholder-zinc-550 focus:outline-none resize-none max-h-[120px] p-2 leading-relaxed"
+          style={{ scrollbarWidth: "thin" }}
+        />
+      </div>
       
       <div className="flex items-center gap-2 shrink-0 pr-1 pb-1">
         {/* Keyboard shortcut hint */}

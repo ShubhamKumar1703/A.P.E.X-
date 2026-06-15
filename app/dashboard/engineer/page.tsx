@@ -27,13 +27,17 @@ import { StrategyInsightPanel } from "@/components/ai/StrategyInsightPanel";
 import { 
   Activity, 
   AlertTriangle, 
-  CloudSun, 
   Flag, 
   Play, 
   Trophy, 
   Compass 
 } from "lucide-react";
 import { CompactSessionContext, CompactDriverContext, CompactAnalyticsContext, AICompileContext } from "@/lib/ai/types";
+
+// Weather & Coordinate system Imports
+import { getCircuitCoordinates } from "@/data/circuit-coordinates";
+import { fetchCircuitWeather } from "@/lib/services/weather/openmeteo";
+import { WeatherIntelligenceCard } from "@/components/ai/WeatherIntelligenceCard";
 
 const CIRCUIT_LAPS: Record<string, number> = {
   catalunya: 66,
@@ -157,6 +161,22 @@ function EngineerDashboardContent() {
     }
     return false; // Historical: do not poll
   }, [sessionDetails]);
+
+  // Resolve circuit coordinates
+  const coordinates = React.useMemo(() => {
+    if (!sessionDetails) return null;
+    return getCircuitCoordinates(sessionDetails.circuit_short_name, sessionDetails.location);
+  }, [sessionDetails]);
+
+  // Fetch weather conditions from Open-Meteo
+  const { data: weatherData = null, isLoading: isWeatherLoading } = useQuery({
+    queryKey: ["circuitWeather", resolvedSessionKey, coordinates?.latitude, coordinates?.longitude],
+    queryFn: () => fetchCircuitWeather(coordinates!.latitude, coordinates!.longitude),
+    enabled: !!resolvedSessionKey && !!coordinates,
+    staleTime: 5 * 60 * 1000,
+    refetchInterval: pollInterval ? 5 * 60 * 1000 : false,
+    refetchOnWindowFocus: false,
+  });
 
   // 3. Fetch sub-streams
   const { data: drivers = [] } = useQuery({
@@ -353,9 +373,10 @@ function EngineerDashboardContent() {
       session: sessionCtx,
       drivers: driversCtx,
       analytics: analyticsCtx,
-      standingsSummary: formatStandingsContext(driverStandings, constructorStandings)
+      standingsSummary: formatStandingsContext(driverStandings, constructorStandings),
+      weather: weatherData
     };
-  }, [resolvedSessionKey, sessionDetails, laps, raceState, aggregatedDrivers, driverStandings, constructorStandings, pollInterval]);
+  }, [resolvedSessionKey, sessionDetails, laps, raceState, aggregatedDrivers, driverStandings, constructorStandings, pollInterval, weatherData]);
 
   // Loading state
   const isInitialLoading = isSessionsLoading || (resolvedSessionKey && isDetailsLoading);
@@ -551,31 +572,8 @@ function EngineerDashboardContent() {
               </div>
             </div>
 
-            {/* Weather Placeholder Sensor Card */}
-            <div className="border border-zinc-900 bg-zinc-950/40 rounded-lg p-3 space-y-2 text-[10px]">
-              <span className="font-bold text-zinc-500 uppercase tracking-wider flex items-center gap-1">
-                <CloudSun size={12} className="text-zinc-600" />
-                ENVIRONMENT SENSORS
-              </span>
-              <div className="grid grid-cols-2 gap-2 text-zinc-400">
-                <div className="bg-zinc-950 p-1.5 rounded border border-zinc-900">
-                  <div className="text-zinc-500">AIR TEMP</div>
-                  <div className="text-white font-bold font-mono">24.6°C</div>
-                </div>
-                <div className="bg-zinc-950 p-1.5 rounded border border-zinc-900">
-                  <div className="text-zinc-500">TRACK TEMP</div>
-                  <div className="text-white font-bold font-mono">31.2°C</div>
-                </div>
-                <div className="bg-zinc-950 p-1.5 rounded border border-zinc-900">
-                  <div className="text-zinc-500">HUMIDITY</div>
-                  <div className="text-white font-bold font-mono">58%</div>
-                </div>
-                <div className="bg-zinc-950 p-1.5 rounded border border-zinc-900">
-                  <div className="text-zinc-500">RAIN RISK</div>
-                  <div className="text-emerald-500 font-bold font-mono">0.0%</div>
-                </div>
-              </div>
-            </div>
+            {/* Weather Intelligence Card */}
+            <WeatherIntelligenceCard weather={weatherData} isLoading={isWeatherLoading} />
           </div>
 
           {/* Session metadata panel footer */}
@@ -598,7 +596,7 @@ function EngineerDashboardContent() {
 
         {/* Right Panel: Strategy Insights */}
         <div className="lg:col-span-3 flex flex-col h-[500px] lg:h-[650px]">
-          <StrategyInsightPanel drivers={aggregatedDrivers} />
+          <StrategyInsightPanel drivers={aggregatedDrivers} weather={weatherData} />
         </div>
 
       </div>

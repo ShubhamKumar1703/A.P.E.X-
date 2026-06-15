@@ -8,7 +8,7 @@ import { formatAnalyticsContext } from "./tools/analytics-tool";
  * This summary is passed to the LLM system prompt.
  */
 export function buildCuratedContextText(context: AICompileContext): string {
-  const { session, drivers, analytics, standingsSummary } = context;
+  const { session, drivers, analytics, standingsSummary, weather } = context;
 
   let block = "";
 
@@ -20,6 +20,20 @@ export function buildCuratedContextText(context: AICompileContext): string {
   block += `- Track Flag Status: ${session.flagStatus}\n`;
   block += `- Track Condition Alert: ${session.trackAlert}\n`;
   block += `- Latest Control Message: "${session.latestMessage}"\n\n`;
+
+  // 1.5 Weather Conditions
+  block += `=== WEATHER & ENVIRONMENTAL CONDITIONS ===\n`;
+  if (weather) {
+    block += `- Ambient Air Temperature: ${weather.airTemp}°C | Relative Humidity: ${weather.humidity}% | Precipitation: ${weather.precipitation}mm\n`;
+    block += `- Wind Speed: ${weather.windSpeed} km/h | Wind Direction: ${weather.windDirection}°\n`;
+    block += `- Strategic Rain Risk: ${weather.analysis.rainRisk} (${weather.analysis.rainRiskReason})\n`;
+    block += `- Track Grip Evolution Potential: ${weather.analysis.trackEvolution}\n`;
+    block += `- Tyre Thermal Management Difficulty: ${weather.analysis.tyreManagementRisk}\n`;
+    block += `- Aerodynamic Wind Sensitivity: ${weather.analysis.windSensitivity} (${weather.analysis.windImpactReason})\n`;
+    block += `- Ambient Temp Trend: ${weather.analysis.tempTrend} | Radar Volatility: ${weather.analysis.weatherVolatility}\n\n`;
+  } else {
+    block += `- Telemetry status: WEATHER SENSORS OFFLINE // RADAR DISCONNECTED\n\n`;
+  }
 
   // 2. Leaderboard & Timing Gaps
   block += `=== TIMING LEADERBOARD (Top 10) ===\n`;

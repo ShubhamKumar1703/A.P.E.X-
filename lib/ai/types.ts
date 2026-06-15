@@ -1,3 +1,6 @@
+import { WeatherContext } from "@/lib/services/weather/types";
+import { ScenarioState, SimulationResult } from "@/lib/sandbox/types";
+
 export interface ChatMessage {
   id: string;
   role: "user" | "assistant" | "system";
@@ -63,4 +66,13 @@ export interface AICompileContext {
   drivers: CompactDriverContext[];
   analytics: CompactAnalyticsContext;
   standingsSummary?: string;
+  weather?: WeatherContext | null;
+}
+
+export interface AISandboxContext {
+  isSandbox: true;
+  scenarioA: ScenarioState;
+  resultA: SimulationResult;
+  scenarioB?: ScenarioState | null;
+  resultB?: SimulationResult | null;
 }

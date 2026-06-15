@@ -3,7 +3,7 @@
 import React from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Home, Calendar, Trophy, Activity, MessageSquare } from "lucide-react";
+import { Home, Calendar, Trophy, Activity, MessageSquare, Sliders } from "lucide-react";
 
 export function MobileNavigation() {
   const pathname = usePathname();
@@ -63,6 +63,17 @@ export function MobileNavigation() {
       >
         <MessageSquare size={18} />
         <span className="text-[9px] font-mono font-bold tracking-wider uppercase">AI Engineer</span>
+      </Link>
+
+      {/* Strategy Sandbox Link */}
+      <Link 
+        href="/dashboard/sandbox"
+        className={`flex flex-col items-center justify-center gap-1 ${
+          pathname.startsWith("/dashboard/sandbox") ? "text-[#FF1801]" : "text-zinc-500"
+        }`}
+      >
+        <Sliders size={18} />
+        <span className="text-[9px] font-mono font-bold tracking-wider uppercase">Sandbox</span>
       </Link>
     </nav>
   );

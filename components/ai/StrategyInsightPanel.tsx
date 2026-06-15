@@ -1,10 +1,12 @@
 import React from "react";
 import { LiveDriverState } from "@/lib/live/driver-state";
 import { parseGapToSeconds } from "@/lib/analytics/race-insights";
-import { ShieldAlert, Timer, TrendingDown, Target, Hourglass, Zap } from "lucide-react";
+import { ShieldAlert, Timer, TrendingDown, Target, Hourglass, Zap, Wind } from "lucide-react";
+import { WeatherContext } from "@/lib/services/weather/types";
 
 interface StrategyInsightPanelProps {
   drivers: LiveDriverState[];
+  weather?: WeatherContext | null;
 }
 
 const TYRE_THRESHOLDS: Record<string, number> = {
@@ -27,7 +29,7 @@ function parseLapTimeToSeconds(lapTime: string): number | null {
   return isNaN(secs) ? null : secs;
 }
 
-export function StrategyInsightPanel({ drivers }: StrategyInsightPanelProps) {
+export function StrategyInsightPanel({ drivers, weather }: StrategyInsightPanelProps) {
   // 1. Calculate Longest Stint
   const longestStint = React.useMemo<{ driver: LiveDriverState; laps: number } | null>(() => {
     let maxAge = -1;
@@ -156,6 +158,83 @@ export function StrategyInsightPanel({ drivers }: StrategyInsightPanelProps) {
 
       {/* Body List */}
       <div className="flex-1 overflow-y-auto p-4 space-y-4 custom-scrollbar">
+        {/* Weather Alerts - Strategic Insights */}
+        {weather && (weather.analysis.rainRisk === "Moderate" || weather.analysis.rainRisk === "High") && (
+          <div className="border border-red-950/20 bg-red-950/5 p-3 rounded-lg flex items-start gap-3">
+            <div className="p-1.5 rounded bg-red-950/10 text-red-500 shrink-0 mt-0.5 border border-red-900/20 animate-pulse">
+              <ShieldAlert size={14} />
+            </div>
+            <div className="space-y-1">
+              <div className="text-[9px] font-bold text-red-500 uppercase tracking-widest">
+                CRITICAL RAIN RISK ALERT
+              </div>
+              <div className="text-xs font-bold text-white">
+                Precipitation Threat: {weather.analysis.rainRisk}
+              </div>
+              <div className="text-[10px] text-zinc-400 leading-relaxed">
+                {weather.analysis.rainRiskReason} Prepare wet tyre stint variations.
+              </div>
+            </div>
+          </div>
+        )}
+
+        {weather && weather.analysis.tyreManagementRisk === "High" && (
+          <div className="border border-amber-950/20 bg-amber-950/5 p-3 rounded-lg flex items-start gap-3">
+            <div className="p-1.5 rounded bg-amber-950/10 text-amber-500 shrink-0 mt-0.5 border border-amber-900/20">
+              <TrendingDown size={14} />
+            </div>
+            <div className="space-y-1">
+              <div className="text-[9px] font-bold text-amber-500 uppercase tracking-widest">
+                TYRE THERMAL STRESS WARNING
+              </div>
+              <div className="text-xs font-bold text-white">
+                Ambient Air: {weather.airTemp.toFixed(1)}°C
+              </div>
+              <div className="text-[10px] text-zinc-400 leading-relaxed">
+                High ambient temperature detected. Tyre thermal degradation will accelerate. Increase management margins.
+              </div>
+            </div>
+          </div>
+        )}
+
+        {weather && (weather.analysis.windSensitivity === "Elevated" || weather.analysis.windSensitivity === "Severe") && (
+          <div className="border border-zinc-900 bg-zinc-950/30 p-3 rounded-lg flex items-start gap-3">
+            <div className="p-1.5 rounded bg-zinc-900 text-blue-400 shrink-0 mt-0.5 border border-zinc-850">
+              <Wind size={14} />
+            </div>
+            <div className="space-y-1">
+              <div className="text-[9px] font-bold text-zinc-500 uppercase tracking-widest">
+                AERO STABILITY WIND ALERT
+              </div>
+              <div className="text-xs font-bold text-white">
+                Wind Velocity: {weather.windSpeed.toFixed(1)} km/h
+              </div>
+              <div className="text-[10px] text-zinc-400 leading-relaxed">
+                {weather.analysis.windImpactReason} Aero balance in high-speed zones will be affected.
+              </div>
+            </div>
+          </div>
+        )}
+
+        {weather && weather.analysis.tempTrend === "Cooling Trend" && (
+          <div className="border border-zinc-900 bg-zinc-950/30 p-3 rounded-lg flex items-start gap-3">
+            <div className="p-1.5 rounded bg-zinc-900 text-purple-400 shrink-0 mt-0.5 border border-zinc-850">
+              <Hourglass size={14} />
+            </div>
+            <div className="space-y-1">
+              <div className="text-[9px] font-bold text-zinc-500 uppercase tracking-widest">
+                TRACK COOLING TREND DETECTED
+              </div>
+              <div className="text-xs font-bold text-white">
+                Cooling Trend Indicated
+              </div>
+              <div className="text-[10px] text-zinc-400 leading-relaxed">
+                Track temp is dropping. Tyre thermal windows will contract. Drivers must adapt out-lap tyre warming cycles.
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* Longest Stint Card */}
         {longestStint && (
           <div className="border border-zinc-900 bg-zinc-950/30 p-3 rounded-lg flex items-start gap-3">
