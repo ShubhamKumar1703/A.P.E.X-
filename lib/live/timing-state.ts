@@ -11,9 +11,16 @@ export function sortTimingBoard(states: LiveDriverState[]): LiveDriverState[] {
     if (gapStr === "Leader") return 0;
     if (gapStr === "--" || !gapStr) return Infinity;
     
+    const clean = gapStr.toUpperCase().trim();
+    if (clean.includes("LAP")) {
+      const matches = clean.match(/\d+/);
+      const laps = matches ? parseInt(matches[0], 10) : 1;
+      return 10000 + laps; // Sort lapped cars behind any lead-lap driver
+    }
+    
     // Strip "+" and "s" (e.g. "+1.234s" -> "1.234")
-    const clean = gapStr.replace(/[+s]/g, "").trim();
-    const parsed = parseFloat(clean);
+    const cleanSecs = clean.replace(/[+S]/g, "").trim();
+    const parsed = parseFloat(cleanSecs);
     return isNaN(parsed) ? Infinity : parsed;
   };
 

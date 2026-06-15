@@ -131,23 +131,24 @@ export function aggregateDriverStates(
     const position = 20; // fallback
 
     if (latestInterval) {
-      const gapVal = typeof latestInterval.gap_to_leader === "number"
-        ? latestInterval.gap_to_leader
-        : latestInterval.gap_to_leader !== null
-        ? parseFloat(String(latestInterval.gap_to_leader))
-        : null;
+      const rawGap = latestInterval.gap_to_leader;
+      if (rawGap === 0 || String(rawGap) === "0") {
+        gapToLeader = "Leader";
+      } else if (rawGap !== null && rawGap !== undefined) {
+        const rawGapStr = String(rawGap).toUpperCase().trim();
+        if (rawGapStr.includes("LAP")) {
+          gapToLeader = rawGapStr.startsWith("+") ? rawGapStr : `+${rawGapStr}`;
+        } else {
+          const gapVal = typeof rawGap === "number" ? rawGap : parseFloat(rawGapStr);
+          gapToLeader = !isNaN(gapVal) ? `+${gapVal.toFixed(3)}s` : "--";
+        }
+      }
 
       const intVal = typeof latestInterval.interval === "number"
         ? latestInterval.interval
         : latestInterval.interval !== null
         ? parseFloat(String(latestInterval.interval))
         : null;
-
-      gapToLeader = gapVal === 0
-        ? "Leader"
-        : gapVal !== null && !isNaN(gapVal)
-        ? `+${gapVal.toFixed(3)}s`
-        : "--";
         
       intervalAhead = intVal === 0
         ? "—"
