@@ -131,16 +131,28 @@ export function aggregateDriverStates(
     const position = 20; // fallback
 
     if (latestInterval) {
-      gapToLeader = latestInterval.gap_to_leader === 0 
-        ? "Leader" 
-        : latestInterval.gap_to_leader !== null 
-        ? `+${latestInterval.gap_to_leader.toFixed(3)}s` 
+      const gapVal = typeof latestInterval.gap_to_leader === "number"
+        ? latestInterval.gap_to_leader
+        : latestInterval.gap_to_leader !== null
+        ? parseFloat(String(latestInterval.gap_to_leader))
+        : null;
+
+      const intVal = typeof latestInterval.interval === "number"
+        ? latestInterval.interval
+        : latestInterval.interval !== null
+        ? parseFloat(String(latestInterval.interval))
+        : null;
+
+      gapToLeader = gapVal === 0
+        ? "Leader"
+        : gapVal !== null && !isNaN(gapVal)
+        ? `+${gapVal.toFixed(3)}s`
         : "--";
         
-      intervalAhead = latestInterval.interval === 0
+      intervalAhead = intVal === 0
         ? "—"
-        : latestInterval.interval !== null
-        ? `+${latestInterval.interval.toFixed(3)}s`
+        : intVal !== null && !isNaN(intVal)
+        ? `+${intVal.toFixed(3)}s`
         : "--";
     }
 
@@ -148,9 +160,10 @@ export function aggregateDriverStates(
     const inPitLane = lastLapObj ? lastLapObj.is_pit_out_lap : false;
 
     // Team color hex code configuration
-    const teamColor = driver.team_colour.startsWith("#") 
-      ? driver.team_colour 
-      : `#${driver.team_colour}`;
+    const rawColour = driver.team_colour || "CCCCCC";
+    const teamColor = rawColour.startsWith("#") 
+      ? rawColour 
+      : `#${rawColour}`;
 
     return {
       driverNumber: num,
