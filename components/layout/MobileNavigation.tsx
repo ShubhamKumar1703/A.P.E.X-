@@ -3,7 +3,7 @@
 import React from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Home, Calendar, Trophy, Activity } from "lucide-react";
+import { Home, Calendar, Trophy, Activity, MessageSquare } from "lucide-react";
 
 export function MobileNavigation() {
   const pathname = usePathname();
@@ -52,6 +52,17 @@ export function MobileNavigation() {
       >
         <Trophy size={18} />
         <span className="text-[9px] font-mono font-bold tracking-wider uppercase">Standings</span>
+      </Link>
+
+      {/* AI Engineer Link */}
+      <Link 
+        href="/dashboard/engineer"
+        className={`flex flex-col items-center justify-center gap-1 ${
+          pathname.startsWith("/dashboard/engineer") ? "text-[#FF1801]" : "text-zinc-500"
+        }`}
+      >
+        <MessageSquare size={18} />
+        <span className="text-[9px] font-mono font-bold tracking-wider uppercase">AI Engineer</span>
       </Link>
     </nav>
   );
