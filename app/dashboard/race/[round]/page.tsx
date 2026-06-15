@@ -13,7 +13,6 @@ import {
   Clock, 
   Flag, 
   Zap, 
-  Award, 
   Trophy,
   AlertTriangle, 
   RefreshCw, 
@@ -133,18 +132,8 @@ export default function RaceDetailsPage() {
   if (podium.length >= 1) podiumLayout.push(podium[0]); // 1st
   if (podium.length >= 3) podiumLayout.push(podium[2]); // 3rd
 
-  // Gained Places calculation for Driver of the Day (Post-Race)
-  let dotdCandidate: F1RaceResult | null = null;
-  if (hasResults) {
-    let maxGained = -1;
-    results.forEach((r) => {
-      const gained = r.grid - r.position;
-      if (gained > maxGained) {
-        maxGained = gained;
-        dotdCandidate = r;
-      }
-    });
-  }
+  // Find driver with the fastest lap of the race
+  const fastestLapDriver = hasResults ? results.find((r) => r.fastestLapRank === 1) : null;
 
   const getPodiumColor = (pos: number) => {
     if (pos === 1) return { border: "border-[#FFD700]/30", text: "text-[#FFD700]", bg: "bg-[#FFD700]/5", badge: "bg-[#FFD700]/10 border-[#FFD700]/30" };
@@ -427,38 +416,38 @@ export default function RaceDetailsPage() {
                   </div>
                 </div>
 
-                {/* Driver of the Day block (4 cols) */}
-                {dotdCandidate && (
+                {/* Fastest Lap of the Race block (4 cols) */}
+                {fastestLapDriver && (
                   <div className="lg:col-span-4 flex flex-col space-y-4">
                     <h3 className="text-xs font-mono text-zinc-500 font-bold uppercase tracking-widest">
-                      DRIVER OF THE DAY (TELEMETRY)
+                      FASTEST LAP OF THE RACE
                     </h3>
                     
-                    <div className="bg-gradient-to-br from-purple-950/15 via-zinc-950 to-zinc-950 border border-purple-500/20 rounded-xl p-5 relative overflow-hidden h-[160px] flex flex-col justify-between">
+                    <div className="bg-gradient-to-br from-purple-950/20 via-zinc-950 to-zinc-950 border border-purple-500/30 rounded-xl p-5 relative overflow-hidden h-[160px] flex flex-col justify-between">
                       {/* Purple glow */}
-                      <div className="absolute -inset-px bg-gradient-to-r from-purple-600/10 to-transparent blur-md pointer-events-none" />
+                      <div className="absolute -inset-px bg-gradient-to-r from-purple-500/10 to-transparent blur-md pointer-events-none" />
                       
                       <div className="flex items-center justify-between">
-                        <span className="flex items-center gap-1.5 px-2 py-0.5 rounded bg-purple-500/10 border border-purple-500/20 text-purple-400 font-mono text-[9px] font-bold uppercase tracking-wider">
-                          <Award size={10} /> Maximum Gained
+                        <span className="flex items-center gap-1.5 px-2 py-0.5 rounded bg-purple-500/15 border border-purple-500/30 text-purple-400 font-mono text-[9px] font-bold uppercase tracking-wider">
+                          <Zap size={10} className="fill-purple-400/20" /> Purple Sector
                         </span>
-                        <span className="font-mono text-zinc-500 text-[10px]">
-                          +{(dotdCandidate as F1RaceResult).grid - (dotdCandidate as F1RaceResult).position} POSITIONS
+                        <span className="font-mono text-purple-400 font-black text-xs">
+                          {fastestLapDriver.fastestLapTime}
                         </span>
                       </div>
 
-                      <div className="space-y-1 mt-4">
-                        <h4 className="text-base font-black text-white font-mono leading-none">
-                          {(dotdCandidate as F1RaceResult).firstName} {(dotdCandidate as F1RaceResult).lastName}
+                      <div className="space-y-0.5 mt-2">
+                        <h4 className="text-base font-black text-white font-mono leading-tight">
+                          {fastestLapDriver.firstName} {fastestLapDriver.lastName}
                         </h4>
-                        <span className="text-xs font-mono font-bold block uppercase" style={{ color: (dotdCandidate as F1RaceResult).teamColor }}>
-                          {(dotdCandidate as F1RaceResult).teamName}
+                        <span className="text-[10px] font-mono font-bold block uppercase leading-none" style={{ color: fastestLapDriver.teamColor }}>
+                          {fastestLapDriver.teamName}
                         </span>
                       </div>
 
                       <div className="border-t border-zinc-900 pt-2 flex justify-between font-mono text-[9px] text-zinc-500">
-                        <span>STARTED: P{(dotdCandidate as F1RaceResult).grid}</span>
-                        <span>FINISHED: P{(dotdCandidate as F1RaceResult).position}</span>
+                        <span>SET ON LAP: <strong className="text-zinc-300">{fastestLapDriver.fastestLapLap}</strong></span>
+                        <span>FINISHED: <strong className="text-zinc-300">P{fastestLapDriver.position}</strong></span>
                       </div>
                     </div>
                   </div>

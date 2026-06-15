@@ -96,7 +96,9 @@ export async function getRaceResults(round: number): Promise<F1RaceResult[]> {
       teamColor: getTeamColor(raw.Constructor.constructorId),
       nationality: raw.Driver.nationality,
       time: raw.Time?.time,
-      fastestLapTime: raw.FastestLap?.Time?.time
+      fastestLapTime: raw.FastestLap?.Time?.time,
+      fastestLapRank: raw.FastestLap ? parseInt(raw.FastestLap.rank, 10) : undefined,
+      fastestLapLap: raw.FastestLap ? parseInt(raw.FastestLap.lap, 10) : undefined
     };
   });
 }

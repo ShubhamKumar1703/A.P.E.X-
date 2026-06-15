@@ -152,6 +152,8 @@ export interface F1RaceResult {
   nationality: string;
   time?: string;
   fastestLapTime?: string;
+  fastestLapRank?: number;
+  fastestLapLap?: number;
 }
 
 export interface F1QualifyingResult {
