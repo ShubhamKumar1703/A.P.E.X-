@@ -9,7 +9,7 @@ export function sortTimingBoard(states: LiveDriverState[]): LiveDriverState[] {
 
   const parseGap = (gapStr: string): number => {
     if (gapStr === "Leader") return 0;
-    if (gapStr === "--" || !gapStr) return Infinity;
+    if (gapStr === "DNF" || gapStr === "--" || !gapStr) return Infinity;
     
     const clean = gapStr.toUpperCase().trim();
     if (clean.includes("LAP")) {

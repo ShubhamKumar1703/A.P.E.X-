@@ -68,9 +68,14 @@ export function aggregateDriverStates(
     stintsByDriver.get(s.driver_number)!.push(s);
   });
 
-  // Group intervals by driver (keep the latest one)
+  // Group intervals by driver (keep the latest one) and find max interval timestamp
   const latestIntervalByDriver = new Map<number, OpenF1Interval>();
+  let maxIntervalTime = 0;
   intervals.forEach((i) => {
+    const t = new Date(i.date).getTime();
+    if (t > maxIntervalTime) {
+      maxIntervalTime = t;
+    }
     const existing = latestIntervalByDriver.get(i.driver_number);
     if (!existing || new Date(i.date) > new Date(existing.date)) {
       latestIntervalByDriver.set(i.driver_number, i);
@@ -130,31 +135,45 @@ export function aggregateDriverStates(
     let intervalAhead = "--";
     const position = 20; // fallback
 
-    if (latestInterval) {
-      const rawGap = latestInterval.gap_to_leader;
-      if (rawGap === 0 || String(rawGap) === "0") {
-        gapToLeader = "Leader";
-      } else if (rawGap !== null && rawGap !== undefined) {
-        const rawGapStr = String(rawGap).toUpperCase().trim();
-        if (rawGapStr.includes("LAP")) {
-          gapToLeader = rawGapStr.startsWith("+") ? rawGapStr : `+${rawGapStr}`;
-        } else {
-          const gapVal = typeof rawGap === "number" ? rawGap : parseFloat(rawGapStr);
-          gapToLeader = !isNaN(gapVal) ? `+${gapVal.toFixed(3)}s` : "--";
-        }
+    // Check if driver is retired (interval data is older than session max by 3 minutes)
+    let isRetired = false;
+    if (latestInterval && maxIntervalTime > 0) {
+      const driverTime = new Date(latestInterval.date).getTime();
+      if (maxIntervalTime - driverTime > 180000) {
+        isRetired = true;
       }
+    }
 
-      const intVal = typeof latestInterval.interval === "number"
-        ? latestInterval.interval
-        : latestInterval.interval !== null
-        ? parseFloat(String(latestInterval.interval))
-        : null;
-        
-      intervalAhead = intVal === 0
-        ? "—"
-        : intVal !== null && !isNaN(intVal)
-        ? `+${intVal.toFixed(3)}s`
-        : "--";
+    if (latestInterval) {
+      if (isRetired) {
+        gapToLeader = "DNF";
+        intervalAhead = "—";
+      } else {
+        const rawGap = latestInterval.gap_to_leader;
+        if (rawGap === 0 || String(rawGap) === "0") {
+          gapToLeader = "Leader";
+        } else if (rawGap !== null && rawGap !== undefined) {
+          const rawGapStr = String(rawGap).toUpperCase().trim();
+          if (rawGapStr.includes("LAP")) {
+            gapToLeader = rawGapStr.startsWith("+") ? rawGapStr : `+${rawGapStr}`;
+          } else {
+            const gapVal = typeof rawGap === "number" ? rawGap : parseFloat(rawGapStr);
+            gapToLeader = !isNaN(gapVal) ? `+${gapVal.toFixed(3)}s` : "--";
+          }
+        }
+
+        const intVal = typeof latestInterval.interval === "number"
+          ? latestInterval.interval
+          : latestInterval.interval !== null
+          ? parseFloat(String(latestInterval.interval))
+          : null;
+          
+        intervalAhead = intVal === 0
+          ? "—"
+          : intVal !== null && !isNaN(intVal)
+          ? `+${intVal.toFixed(3)}s`
+          : "--";
+      }
     }
 
     // Pit status
