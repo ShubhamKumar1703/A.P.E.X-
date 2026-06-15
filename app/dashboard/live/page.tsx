@@ -64,6 +64,8 @@ function LiveDashboardContent() {
     queryKey: ["sessionDetails", resolvedSessionKey],
     queryFn: () => getSessionDetails(resolvedSessionKey!),
     enabled: !!resolvedSessionKey,
+    staleTime: 60 * 1000,
+    refetchOnWindowFocus: false,
   });
 
   // Calculate polling intervals based on session timeframe
@@ -87,6 +89,8 @@ function LiveDashboardContent() {
     queryKey: ["liveDrivers", resolvedSessionKey],
     queryFn: () => getDrivers(resolvedSessionKey!),
     enabled: !!resolvedSessionKey,
+    staleTime: 60 * 1000,
+    refetchOnWindowFocus: false,
   });
 
   const { data: laps = [] } = useQuery({
@@ -94,6 +98,8 @@ function LiveDashboardContent() {
     queryFn: () => getLaps(resolvedSessionKey!),
     enabled: !!resolvedSessionKey,
     refetchInterval: pollInterval,
+    staleTime: pollInterval || 5000,
+    refetchOnWindowFocus: false,
   });
 
   const { data: stints = [] } = useQuery({
@@ -101,6 +107,8 @@ function LiveDashboardContent() {
     queryFn: () => getStints(resolvedSessionKey!),
     enabled: !!resolvedSessionKey,
     refetchInterval: pollInterval,
+    staleTime: pollInterval || 5000,
+    refetchOnWindowFocus: false,
   });
 
   const { data: intervals = [] } = useQuery({
@@ -108,6 +116,8 @@ function LiveDashboardContent() {
     queryFn: () => getIntervals(resolvedSessionKey!),
     enabled: !!resolvedSessionKey,
     refetchInterval: pollInterval,
+    staleTime: pollInterval || 5000,
+    refetchOnWindowFocus: false,
   });
 
   const { data: pitstops = [] } = useQuery({
@@ -115,6 +125,8 @@ function LiveDashboardContent() {
     queryFn: () => getPitStops(resolvedSessionKey!),
     enabled: !!resolvedSessionKey,
     refetchInterval: pollInterval,
+    staleTime: pollInterval || 5000,
+    refetchOnWindowFocus: false,
   });
 
   const { data: raceControlMessages = [] } = useQuery({
@@ -122,6 +134,8 @@ function LiveDashboardContent() {
     queryFn: () => getRaceControlMessages(resolvedSessionKey!),
     enabled: !!resolvedSessionKey,
     refetchInterval: pollInterval,
+    staleTime: pollInterval || 5000,
+    refetchOnWindowFocus: false,
   });
 
   // 4. Compile raw streams into domain aggregated states
@@ -152,6 +166,8 @@ function LiveDashboardContent() {
     queryFn: () => getCarData(resolvedSessionKey!, selectedDriverNumber!),
     enabled: !!resolvedSessionKey && !!selectedDriverNumber,
     refetchInterval: pollInterval,
+    staleTime: pollInterval || 5000,
+    refetchOnWindowFocus: false,
   });
 
   const selectedDriver = React.useMemo(() => {
