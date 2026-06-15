@@ -83,10 +83,12 @@ export function Sidebar() {
             Telemetry & AI
           </div>
           <div className="space-y-1">
-            <div className="flex items-center gap-3 px-4 py-3 text-xs font-mono font-bold tracking-wider uppercase text-zinc-600 cursor-not-allowed select-none">
-              <Activity size={16} className="text-zinc-800" />
-              <span>Live Timing <span className="text-[8px] font-normal text-[#FF1801] lowercase bg-[#FF1801]/5 px-1 rounded ml-1 border border-[#FF1801]/10">soon</span></span>
-            </div>
+            <SidebarLink
+              href="/dashboard/live"
+              icon={<Activity size={16} />}
+              label="Live Timing"
+              active={pathname.startsWith("/dashboard/live")}
+            />
             <div className="flex items-center gap-3 px-4 py-3 text-xs font-mono font-bold tracking-wider uppercase text-zinc-600 cursor-not-allowed select-none">
               <MessageSquare size={16} className="text-zinc-800" />
               <span>AI Engineer <span className="text-[8px] font-normal text-[#FF1801] lowercase bg-[#FF1801]/5 px-1 rounded ml-1 border border-[#FF1801]/10">soon</span></span>

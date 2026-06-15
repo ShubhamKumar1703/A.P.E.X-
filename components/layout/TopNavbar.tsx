@@ -4,6 +4,8 @@ import React from "react";
 import { usePathname } from "next/navigation";
 import { Cpu, Activity, Clock } from "lucide-react";
 
+import { getSystemDate } from "@/lib/utils/date";
+
 export function TopNavbar() {
   const pathname = usePathname();
 
@@ -12,6 +14,8 @@ export function TopNavbar() {
     if (pathname.includes("/standings")) return "Standings Control";
     return "Mission Control";
   };
+
+  const formattedDate = getSystemDate().toISOString().split("T")[0];
 
   return (
     <header className="h-16 border-b border-zinc-900 bg-zinc-950/40 backdrop-blur-md flex items-center justify-between px-6 sticky top-0 z-40">
@@ -32,7 +36,7 @@ export function TopNavbar() {
         <div className="hidden sm:flex items-center gap-1.5 bg-zinc-900/60 border border-zinc-900 px-2.5 py-1 rounded">
           <Clock size={11} className="text-[#FF1801]" />
           <span className="text-zinc-400">SYS_DATE:</span>
-          <span className="text-zinc-200 font-bold">2026-06-15</span>
+          <span className="text-zinc-200 font-bold">{formattedDate}</span>
         </div>
 
         {/* Sync Rate */}

@@ -15,6 +15,8 @@ import {
   RawApiQualifyingResult 
 } from "./types";
 
+import { getRaceStatus } from "@/lib/utils/date";
+
 /**
  * Retrieves the current season's race schedule.
  * Automatically classifies races relative to the system date.
@@ -22,28 +24,15 @@ import {
 export async function getCurrentCalendar(): Promise<F1Race[]> {
   const rawData = await fetchFromJolpica<ErgastApiResponse>("/current.json");
   const rawRaces = rawData.MRData.RaceTable?.Races || [];
-  
-  // Set system reference time to the user context current time (2026-06-15)
-  const systemTime = new Date("2026-06-15T13:50:53Z");
 
   return rawRaces.map((raw: RawApiRace): F1Race => {
     const round = parseInt(raw.round, 10);
-    const raceDateTime = new Date(`${raw.date}T${raw.time || "00:00:00Z"}`);
-    
-    // Practice date boundaries for determining active weekend
-    const practiceDateTime = raw.FirstPractice 
-      ? new Date(`${raw.FirstPractice.date}T${raw.FirstPractice.time || "00:00:00Z"}`)
-      : new Date(raceDateTime.getTime() - 2 * 24 * 60 * 60 * 1000); // 2 days before race
-
-    let status: "COMPLETED" | "UPCOMING" | "CURRENT_WEEKEND" = "UPCOMING";
-
-    if (systemTime > raceDateTime) {
-      status = "COMPLETED";
-    } else if (systemTime >= practiceDateTime && systemTime <= raceDateTime) {
-      status = "CURRENT_WEEKEND";
-    } else {
-      status = "UPCOMING";
-    }
+    const status = getRaceStatus(
+      raw.date,
+      raw.time,
+      raw.FirstPractice?.date,
+      raw.FirstPractice?.time
+    );
 
     return {
       round,

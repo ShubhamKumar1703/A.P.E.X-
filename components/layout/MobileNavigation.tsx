@@ -3,7 +3,7 @@
 import React from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Home, Calendar, Trophy } from "lucide-react";
+import { Home, Calendar, Trophy, Activity } from "lucide-react";
 
 export function MobileNavigation() {
   const pathname = usePathname();
@@ -30,6 +30,17 @@ export function MobileNavigation() {
       >
         <Calendar size={18} />
         <span className="text-[9px] font-mono font-bold tracking-wider uppercase">Calendar</span>
+      </Link>
+
+      {/* Live Timing Link */}
+      <Link 
+        href="/dashboard/live"
+        className={`flex flex-col items-center justify-center gap-1 ${
+          pathname.startsWith("/dashboard/live") ? "text-[#FF1801]" : "text-zinc-500"
+        }`}
+      >
+        <Activity size={18} />
+        <span className="text-[9px] font-mono font-bold tracking-wider uppercase">Live</span>
       </Link>
 
       {/* Standings Link */}
