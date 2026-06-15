@@ -7,8 +7,12 @@ const OPENF1_BASE_URL = "https://api.openf1.org/v1";
 
 const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
+// FIFO Promise Queue to stagger requests and avoid 429 Rate Limits on bulk mounting
+let requestQueueChain = Promise.resolve();
+const MIN_REQUEST_INTERVAL = 150; // minimum ms between requests
+
 /**
- * Fetch helper for OpenF1 API with built-in retry and backoff for rate limiting.
+ * Fetch helper for OpenF1 API with built-in retry, backoff, and FIFO queue pacing.
  * Converts key/values into URL parameters.
  */
 export async function fetchFromOpenF1<T>(
@@ -17,55 +21,66 @@ export async function fetchFromOpenF1<T>(
   retries = 4,
   baseDelayMs = 300
 ): Promise<T> {
-  const url = new URL(`${OPENF1_BASE_URL}${endpoint.startsWith("/") ? "" : "/"}${endpoint}`);
-  
-  if (params) {
-    Object.entries(params).forEach(([key, val]) => {
-      if (val !== undefined) {
-        url.searchParams.append(key, val.toString());
-      }
-    });
-  }
-
-  for (let attempt = 1; attempt <= retries; attempt++) {
-    try {
-      const res = await fetch(url.toString(), {
-        headers: {
-          Accept: "application/json"
-        }
-      });
-
-      // Handle HTTP 429 Too Many Requests
-      if (res.status === 429) {
-        if (attempt === retries) {
-          throw new Error(`OpenF1 API rate limited (429) after ${retries} attempts`);
-        }
+  return new Promise<T>((resolve, reject) => {
+    requestQueueChain = requestQueueChain
+      .then(async () => {
+        // Pacing delay between requests to avoid server-side rate limits
+        await delay(MIN_REQUEST_INTERVAL);
+      })
+      .then(async () => {
+        const url = new URL(`${OPENF1_BASE_URL}${endpoint.startsWith("/") ? "" : "/"}${endpoint}`);
         
-        // Exponential backoff with randomized jitter to spread out retries
-        const backoff = baseDelayMs * Math.pow(2, attempt) + Math.random() * 150;
-        console.warn(
-          `OpenF1 429 Rate Limit [${endpoint}]. Retrying in ${Math.round(backoff)}ms (Attempt ${attempt}/${retries})...`
-        );
-        await delay(backoff);
-        continue;
-      }
+        if (params) {
+          Object.entries(params).forEach(([key, val]) => {
+            if (val !== undefined) {
+              url.searchParams.append(key, val.toString());
+            }
+          });
+        }
 
-      if (!res.ok) {
-        throw new Error(`OpenF1 API responded with status ${res.status}`);
-      }
+        for (let attempt = 1; attempt <= retries; attempt++) {
+          try {
+            const res = await fetch(url.toString(), {
+              headers: {
+                Accept: "application/json"
+              }
+            });
 
-      return await res.json() as T;
-    } catch (error) {
-      if (attempt === retries) {
-        console.error(`OpenF1 Fetch Failure [${endpoint}]:`, error);
-        throw error;
-      }
-      
-      // For network connection errors or other exceptions, back off and retry
-      const backoff = baseDelayMs * Math.pow(2, attempt) + Math.random() * 150;
-      await delay(backoff);
-    }
-  }
+            // Handle HTTP 429 Too Many Requests
+            if (res.status === 429) {
+              if (attempt === retries) {
+                throw new Error(`OpenF1 API rate limited (429) after ${retries} attempts`);
+              }
+              
+              const backoff = baseDelayMs * Math.pow(2, attempt) + Math.random() * 150;
+              console.warn(
+                `OpenF1 429 Rate Limit [${endpoint}]. Retrying in ${Math.round(backoff)}ms (Attempt ${attempt}/${retries})...`
+              );
+              await delay(backoff);
+              continue;
+            }
 
-  throw new Error(`OpenF1 Fetch Failure [${endpoint}]: Max retries reached`);
+            if (!res.ok) {
+              throw new Error(`OpenF1 API responded with status ${res.status}`);
+            }
+
+            const json = await res.json();
+            resolve(json as T);
+            return;
+          } catch (error) {
+            if (attempt === retries) {
+              console.error(`OpenF1 Fetch Failure [${endpoint}]:`, error);
+              reject(error);
+              return;
+            }
+            
+            const backoff = baseDelayMs * Math.pow(2, attempt) + Math.random() * 150;
+            await delay(backoff);
+          }
+        }
+      })
+      .catch((err) => {
+        reject(err);
+      });
+  });
 }

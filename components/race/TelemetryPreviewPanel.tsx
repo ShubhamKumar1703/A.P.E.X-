@@ -168,7 +168,7 @@ export default function TelemetryPreviewPanel({
               <span className="text-[9px] text-zinc-500 font-black uppercase mb-1 block">
                 SPEED & GEAR OVERLAY
               </span>
-              <ResponsiveContainer width="100%" height="90%">
+              <ResponsiveContainer width="100%" height="100%" minWidth={0} minHeight={0}>
                 <LineChart
                   data={chartData}
                   margin={{ top: 5, right: 10, left: -25, bottom: 5 }}
@@ -202,7 +202,7 @@ export default function TelemetryPreviewPanel({
               <span className="text-[9px] text-zinc-500 font-black uppercase mb-1 block">
                 THROTTLE / BRAKE INPUTS
               </span>
-              <ResponsiveContainer width="100%" height="90%">
+              <ResponsiveContainer width="100%" height="100%" minWidth={0} minHeight={0}>
                 <LineChart
                   data={chartData}
                   margin={{ top: 5, right: 10, left: -25, bottom: 5 }}
