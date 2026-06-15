@@ -5,14 +5,20 @@ import { useParams } from "next/navigation";
 import Link from "next/link";
 import { useQuery } from "@tanstack/react-query";
 import { getRaceDetails, getRaceResults, getQualifyingResults } from "@/lib/services/f1/races";
+import { getDriverStandings } from "@/lib/services/f1/standings";
 import { getCircuitDetails } from "@/data/circuits-db";
-import { F1Race, F1RaceResult, F1QualifyingResult } from "@/lib/services/f1/types";
+import { F1Race, F1RaceResult, F1QualifyingResult, F1DriverStanding } from "@/lib/services/f1/types";
 import { LoadingSkeleton } from "@/components/ui/LoadingSkeleton";
+import CircuitIntelligenceCard from "@/components/race/CircuitIntelligenceCard";
+import QualifyingAnalysis from "@/components/race/QualifyingAnalysis";
+import RaceAnalysis from "@/components/race/RaceAnalysis";
+import InsightsPanel from "@/components/race/InsightsPanel";
+import RaceWeekendTimeline from "@/components/race/RaceWeekendTimeline";
+import { getBiggestGainer } from "@/lib/analytics/position-gain";
+
 import { 
   ArrowLeft, 
   Clock, 
-  Flag, 
-  Zap, 
   Trophy,
   AlertTriangle, 
   RefreshCw, 
@@ -24,7 +30,7 @@ export default function RaceDetailsPage() {
   const params = useParams();
   const round = parseInt(params.round as string, 10);
   
-  const [activeTab, setActiveTab] = useState<"overview" | "practice" | "qualifying" | "race">("overview");
+  const [activeTab, setActiveTab] = useState<"overview" | "qualifying" | "race" | "insights">("overview");
 
   // Query Race Metadata
   const {
@@ -39,7 +45,7 @@ export default function RaceDetailsPage() {
 
   // Query Race Results
   const {
-    data: results,
+    data: resultsData,
     isLoading: resultsLoading,
     isError: resultsError,
     refetch: refetchResults
@@ -51,7 +57,7 @@ export default function RaceDetailsPage() {
 
   // Query Qualifying Results
   const {
-    data: qualifying,
+    data: qualifyingData,
     isLoading: qualifyingLoading,
     isError: qualifyingError,
     refetch: refetchQualifying
@@ -61,13 +67,29 @@ export default function RaceDetailsPage() {
     retry: false
   });
 
-  const isLoading = raceLoading || resultsLoading || qualifyingLoading;
-  const isError = raceError || resultsError || qualifyingError;
+  // Query Driver Standings for Qualifying Winners / Insights
+  const {
+    data: standings = [],
+    isLoading: standingsLoading,
+    isError: standingsError,
+    refetch: refetchStandings
+  } = useQuery<F1DriverStanding[]>({
+    queryKey: ["driverStandings"],
+    queryFn: getDriverStandings,
+    retry: false
+  });
+
+  const results = resultsData || [];
+  const qualifying = qualifyingData || [];
+
+  const isLoading = raceLoading || resultsLoading || qualifyingLoading || standingsLoading;
+  const isError = raceError || resultsError || qualifyingError || standingsError;
 
   const handleRetry = () => {
     refetchRace();
     refetchResults();
     refetchQualifying();
+    refetchStandings();
   };
 
   if (isLoading) {
@@ -121,7 +143,6 @@ export default function RaceDetailsPage() {
 
   // Determine if race has occurred based on results availability
   const hasResults = results && results.length > 0;
-  const hasQuali = qualifying && qualifying.length > 0;
 
   // Podium Positions (Post-Race)
   const podium = hasResults ? results.slice(0, 3) : [];
@@ -134,6 +155,9 @@ export default function RaceDetailsPage() {
 
   // Find driver with the fastest lap of the race
   const fastestLapDriver = hasResults ? results.find((r) => r.fastestLapRank === 1) : null;
+
+  // Telemetry Driver of the Day calculation (biggest gainer)
+  const dotdDriver = hasResults ? getBiggestGainer(results)?.driver : null;
 
   const getPodiumColor = (pos: number) => {
     if (pos === 1) return { border: "border-[#FFD700]/30", text: "text-[#FFD700]", bg: "bg-[#FFD700]/5", badge: "bg-[#FFD700]/10 border-[#FFD700]/30" };
@@ -187,7 +211,7 @@ export default function RaceDetailsPage() {
 
       {/* Tabs Controller */}
       <div className="flex bg-zinc-900/60 p-1 rounded-lg border border-zinc-850/80 self-start w-fit">
-        {(["overview", "practice", "qualifying", "race"] as const).map((tab) => (
+        {(["overview", "qualifying", "race", "insights"] as const).map((tab) => (
           <button
             key={tab}
             onClick={() => setActiveTab(tab)}
@@ -206,52 +230,111 @@ export default function RaceDetailsPage() {
       {activeTab === "overview" && (
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
           
-          {/* Circuit Specs (8 cols) */}
+          {/* Circuit Specs & Weekend Honors (8 cols) */}
           <div className="lg:col-span-8 space-y-6">
-            <div className="border border-zinc-900 bg-zinc-900/10 rounded-xl p-6 md:p-8 space-y-6">
-              <h3 className="text-xs font-mono text-zinc-500 font-bold uppercase tracking-widest">
-                CIRCUIT CHARACTERISTICS
-              </h3>
-              
-              <p className="text-sm text-zinc-300 leading-relaxed">
-                {circuitSpecs.description}
-              </p>
+            {hasResults && (
+              <div className="bg-zinc-950/60 border border-zinc-900 rounded-xl p-5 md:p-6 font-mono relative overflow-hidden backdrop-blur-sm">
+                <div className="absolute top-0 left-0 right-0 h-[2px] bg-red-600/30" />
+                <div className="flex items-center gap-2 mb-4 text-xs font-bold text-zinc-500 tracking-wider uppercase border-b border-zinc-900 pb-2">
+                  <Trophy size={14} className="text-red-500" />
+                  <span>WEEKEND HONORS & SUMMARY</span>
+                </div>
+                
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  {/* Race Winner */}
+                  <div className="bg-zinc-900/40 border border-zinc-900/60 rounded-lg p-3 flex items-center gap-3">
+                    <span className="w-1.5 h-10 rounded shrink-0" style={{ backgroundColor: results[0]?.teamColor }} />
+                    <div className="min-w-0">
+                      <span className="text-[8px] text-zinc-500 block uppercase font-black tracking-wider">RACE WINNER</span>
+                      <span className="text-xs font-black text-white block truncate leading-tight">
+                        {results[0]?.firstName} {results[0]?.lastName}
+                      </span>
+                      <span className="text-[9px] text-zinc-400 block truncate leading-none uppercase mt-0.5" style={{ color: results[0]?.teamColor }}>
+                        {results[0]?.teamName}
+                      </span>
+                    </div>
+                  </div>
 
-              {/* Grid Specifications */}
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 border-t border-zinc-900 pt-6 font-mono text-xs">
-                <div>
-                  <span className="text-zinc-500 block text-[9px] uppercase">TRACK LENGTH</span>
-                  <span className="text-white font-bold text-sm">{circuitSpecs.length}</span>
+                  {/* Pole Sitter */}
+                  <div className="bg-zinc-900/40 border border-zinc-900/60 rounded-lg p-3 flex items-center gap-3">
+                    <span className="w-1.5 h-10 rounded shrink-0" style={{ backgroundColor: qualifying[0]?.teamColor || "#71717A" }} />
+                    <div className="min-w-0">
+                      <span className="text-[8px] text-zinc-500 block uppercase font-black tracking-wider">POLE POSITION</span>
+                      <span className="text-xs font-black text-white block truncate leading-tight">
+                        {qualifying[0] ? `${qualifying[0].firstName} ${qualifying[0].lastName}` : "N/A"}
+                      </span>
+                      <span className="text-[9px] text-zinc-400 block truncate leading-none uppercase mt-0.5" style={{ color: qualifying[0]?.teamColor }}>
+                        {qualifying[0] ? qualifying[0].teamName : "N/A"}
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Fastest Lap */}
+                  <div className="bg-zinc-900/40 border border-zinc-900/60 rounded-lg p-3 flex items-center gap-3">
+                    <span className="w-1.5 h-10 rounded shrink-0" style={{ backgroundColor: fastestLapDriver?.teamColor || "#71717A" }} />
+                    <div className="min-w-0">
+                      <span className="text-[8px] text-zinc-500 block uppercase font-black tracking-wider">FASTEST LAP</span>
+                      <span className="text-xs font-black text-white block truncate leading-tight">
+                        {fastestLapDriver ? `${fastestLapDriver.firstName} ${fastestLapDriver.lastName}` : "N/A"}
+                      </span>
+                      <span className="text-[9px] text-purple-400 block truncate font-bold leading-none mt-0.5">
+                        {fastestLapDriver ? fastestLapDriver.fastestLapTime : "N/A"}
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Driver of the Day */}
+                  <div className="bg-zinc-900/40 border border-zinc-900/60 rounded-lg p-3 flex items-center gap-3">
+                    <span className="w-1.5 h-10 rounded shrink-0" style={{ backgroundColor: dotdDriver?.teamColor || "#71717A" }} />
+                    <div className="min-w-0">
+                      <span className="text-[8px] text-zinc-500 block uppercase font-black tracking-wider">DRIVER OF THE DAY</span>
+                      <span className="text-xs font-black text-white block truncate leading-tight">
+                        {dotdDriver ? `${dotdDriver.firstName} ${dotdDriver.lastName}` : "N/A"}
+                      </span>
+                      <span className="text-[9px] text-zinc-400 block truncate leading-none uppercase mt-0.5" style={{ color: dotdDriver?.teamColor }}>
+                        {dotdDriver ? dotdDriver.teamName : "N/A"}
+                      </span>
+                    </div>
+                  </div>
                 </div>
-                <div>
-                  <span className="text-zinc-500 block text-[9px] uppercase">TURN COUNT</span>
-                  <span className="text-white font-bold text-sm">{circuitSpecs.turns} TURNS</span>
-                </div>
-                <div>
-                  <span className="text-zinc-500 block text-[9px] uppercase">DRS ZONES</span>
-                  <span className="text-white font-bold text-sm">{circuitSpecs.drsZones} ZONES</span>
-                </div>
-                <div>
-                  <span className="text-[#FF1801] block text-[9px] uppercase font-bold">LAP RECORD</span>
-                  <span className="text-white font-bold block">{circuitSpecs.lapRecord.time}</span>
-                  <span className="text-[9px] text-zinc-500">{circuitSpecs.lapRecord.driver} ({circuitSpecs.lapRecord.year})</span>
+
+                {/* Podium Layout */}
+                <div className="mt-6 border-t border-zinc-900 pt-5 space-y-3">
+                  <span className="text-[10px] text-zinc-500 block uppercase font-black">PODIUM FINISHERS</span>
+                  <div className="grid grid-cols-3 gap-3 items-end bg-zinc-950/40 border border-zinc-900 p-4 rounded-xl">
+                    {podiumLayout.map((driver) => {
+                      const colors = getPodiumColor(driver.position);
+                      const height = driver.position === 1 ? "h-[120px]" : driver.position === 2 ? "h-[100px]" : "h-[90px]";
+                      return (
+                        <div
+                          key={driver.driverId}
+                          className={`relative rounded-lg border bg-gradient-to-t ${colors.bg} ${colors.border} ${height} flex flex-col justify-end p-3 shadow-xl ${
+                            driver.position === 1 ? "scale-[1.02]" : ""
+                          }`}
+                        >
+                          <div className="absolute left-0 top-0 bottom-0 w-1 rounded-l-lg" style={{ backgroundColor: driver.teamColor }} />
+                          <span className={`absolute top-2 right-2 w-4 h-4 rounded-full border flex items-center justify-center font-mono font-black text-[8px] ${colors.badge}`}>
+                            {driver.position}
+                          </span>
+                          <div className="space-y-0.5 font-mono text-[10px] min-w-0">
+                            <h4 className="font-bold text-white text-[11px] truncate leading-tight">
+                              {driver.firstName[0]}. {driver.lastName}
+                            </h4>
+                            <span className="text-[8px] font-bold block truncate uppercase leading-none" style={{ color: driver.teamColor }}>
+                              {driver.teamName}
+                            </span>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
                 </div>
               </div>
+            )}
 
-              {/* Tags */}
-              <div className="flex flex-wrap gap-2 pt-4">
-                {circuitSpecs.characteristics.map((tag) => (
-                  <span
-                    key={tag}
-                    className="px-2.5 py-1 rounded-full bg-zinc-900 text-zinc-400 border border-zinc-850 font-mono text-[9px] uppercase"
-                  >
-                    {tag}
-                  </span>
-                ))}
-              </div>
-            </div>
-
-            {/* AI Preview Section */}
+            <CircuitIntelligenceCard circuit={circuitSpecs} />
+            
+            {/* AI Preview (Only if upcoming) */}
             {!hasResults && (
               <div className="relative overflow-hidden rounded-xl border border-zinc-900 bg-zinc-900/10 p-6 md:p-8 space-y-4">
                 <div className="absolute top-0 right-0 p-4 font-mono text-[8px] text-zinc-600 font-black">
@@ -270,251 +353,25 @@ export default function RaceDetailsPage() {
             )}
           </div>
 
-          {/* Previous Winners (4 cols) */}
+          {/* Timeline and other info (4 cols) */}
           <div className="lg:col-span-4 space-y-6">
-            <div className="border border-zinc-900 bg-zinc-900/10 rounded-xl p-6 space-y-4">
-              <h3 className="text-xs font-mono text-zinc-500 font-bold uppercase tracking-widest flex items-center gap-1.5">
-                <Trophy size={14} className="text-[#FF1801]" />
-                HISTORICAL WINNERS
-              </h3>
-
-              <div className="space-y-2.5 font-mono text-xs">
-                {circuitSpecs.previousWinners.map((winner) => (
-                  <div
-                    key={winner.year}
-                    className="flex items-center justify-between border-b border-zinc-950 pb-2.5 last:border-0 last:pb-0"
-                  >
-                    <div className="space-y-0.5">
-                      <span className="text-zinc-300 font-bold">{winner.driver}</span>
-                      <span className="text-[10px] text-zinc-500 block uppercase">{winner.team}</span>
-                    </div>
-                    <span className="text-[#FF1801] font-bold">{winner.year}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
+            <RaceWeekendTimeline race={race} />
           </div>
 
-        </div>
-      )}
-
-      {activeTab === "practice" && (
-        <div className="border border-dashed border-zinc-800 rounded-xl p-10 text-center space-y-4 bg-zinc-900/5 backdrop-blur-sm max-w-2xl mx-auto font-mono text-xs">
-          <div className="w-12 h-12 rounded-full bg-zinc-900 border border-zinc-800 flex items-center justify-center text-[#FF1801] mx-auto">
-            <Zap size={18} className="animate-pulse" />
-          </div>
-          <div className="space-y-1">
-            <h4 className="text-sm font-bold text-zinc-300 uppercase tracking-tight">{"// PRACTICE TELEMETRY LINKED"}</h4>
-            <p className="text-zinc-500 max-w-sm mx-auto leading-relaxed">
-              Practice timing sheets are securely logged in the local mission control database. Live telemetry visualization boards will link in Phase 5.
-            </p>
-          </div>
         </div>
       )}
 
       {activeTab === "qualifying" && (
-        <div>
-          {hasQuali ? (
-            <div className="bg-zinc-900/10 border border-zinc-900 rounded-xl overflow-hidden shadow-2xl">
-              <div className="overflow-x-auto">
-                <table className="w-full text-left font-mono text-xs text-zinc-400">
-                  <thead className="bg-zinc-950 text-zinc-500 uppercase tracking-widest text-[9px] font-bold border-b border-zinc-900">
-                    <tr>
-                      <th className="py-4 px-6 text-center w-16">POS</th>
-                      <th className="py-4 px-4">DRIVER</th>
-                      <th className="py-4 px-4">CONSTRUCTOR</th>
-                      <th className="py-4 px-4 text-center w-28">Q1</th>
-                      <th className="py-4 px-4 text-center w-28">Q2</th>
-                      <th className="py-4 px-6 text-center w-28">Q3</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-zinc-900/60">
-                    {qualifying.map((quali) => (
-                      <tr key={quali.driverId} className="hover:bg-zinc-900/30 transition-colors">
-                        <td className="py-4 px-6 text-center font-bold text-zinc-300">
-                          {quali.position}
-                        </td>
-                        <td className="py-4 px-4 font-bold text-zinc-200">
-                          <span className="text-zinc-500 text-[9px] mr-2 uppercase bg-zinc-950 border border-zinc-900 px-1 rounded">
-                            {quali.number}
-                          </span>
-                          {quali.firstName} {quali.lastName}
-                        </td>
-                        <td className="py-4 px-4">
-                          <div className="flex items-center gap-2">
-                            <span className="w-1 h-3 rounded-sm block shrink-0" style={{ backgroundColor: quali.teamColor }} />
-                            <span>{quali.teamName}</span>
-                          </div>
-                        </td>
-                        <td className="py-4 px-4 text-center text-zinc-400">{quali.q1 || "--"}</td>
-                        <td className="py-4 px-4 text-center text-zinc-400">{quali.q2 || "--"}</td>
-                        <td className="py-4 px-6 text-center font-bold text-white">{quali.q3 || "--"}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          ) : (
-            <div className="border border-zinc-900 rounded-xl p-8 text-center bg-zinc-900/10 backdrop-blur-sm max-w-sm mx-auto font-mono text-xs text-zinc-500">
-              <Flag size={20} className="mx-auto text-zinc-700 mb-3" />
-              <h4 className="text-zinc-400 font-bold uppercase mb-1">QUALIFYING STANDBY</h4>
-              <p>Qualifying session times will compile automatically on Saturday afternoon.</p>
-            </div>
-          )}
-        </div>
+        <QualifyingAnalysis qualifyingResults={qualifying} standings={standings} />
       )}
 
       {activeTab === "race" && (
-        <div className="space-y-10">
-          {hasResults ? (
-            <>
-              {/* Podium & Driver of the Day row */}
-              <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-end">
-                
-                {/* Podium block (7 cols) */}
-                <div className="lg:col-span-8 flex flex-col space-y-4">
-                  <h3 className="text-xs font-mono text-zinc-500 font-bold uppercase tracking-widest">
-                    SESSION PODIUM
-                  </h3>
-                  
-                  <div className="grid grid-cols-3 gap-4 items-end bg-zinc-950/40 border border-zinc-900 p-5 rounded-xl">
-                    {podiumLayout.map((driver) => {
-                      const colors = getPodiumColor(driver.position);
-                      const height = driver.position === 1 ? "h-[160px]" : driver.position === 2 ? "h-[130px]" : "h-[115px]";
-                      
-                      return (
-                        <div
-                          key={driver.driverId}
-                          className={`relative rounded-lg border bg-gradient-to-t ${colors.bg} ${colors.border} ${height} flex flex-col justify-end p-4 shadow-xl ${
-                            driver.position === 1 ? "scale-[1.02]" : ""
-                          }`}
-                        >
-                          {/* Color bar */}
-                          <div className="absolute left-0 top-0 bottom-0 w-1 rounded-l-lg" style={{ backgroundColor: driver.teamColor }} />
-                          
-                          {/* Position */}
-                          <span className={`absolute top-3 right-3 w-4.5 h-4.5 rounded-full border flex items-center justify-center font-mono font-black text-[9px] ${colors.badge}`}>
-                            {driver.position}
-                          </span>
-
-                          <div className="space-y-1 font-mono text-xs">
-                            <h4 className="font-bold text-white text-[11px] truncate leading-tight">
-                              {driver.firstName[0]}. {driver.lastName}
-                            </h4>
-                            <span className="text-[8px] font-bold block truncate uppercase" style={{ color: driver.teamColor }}>
-                              {driver.teamName}
-                            </span>
-                            <div className="flex justify-between border-t border-zinc-900 pt-1.5 text-[8px] text-zinc-500">
-                              <span>PTS: <strong className="text-zinc-300">{driver.points}</strong></span>
-                              <span>GRID: <strong className="text-zinc-300">{driver.grid}</strong></span>
-                            </div>
-                          </div>
-                        </div>
-                      );
-                    })}
-                  </div>
-                </div>
-
-                {/* Fastest Lap of the Race block (4 cols) */}
-                {fastestLapDriver && (
-                  <div className="lg:col-span-4 flex flex-col space-y-4">
-                    <h3 className="text-xs font-mono text-zinc-500 font-bold uppercase tracking-widest">
-                      FASTEST LAP OF THE RACE
-                    </h3>
-                    
-                    <div className="bg-gradient-to-br from-purple-950/20 via-zinc-950 to-zinc-950 border border-purple-500/30 rounded-xl p-5 relative overflow-hidden h-[160px] flex flex-col justify-between">
-                      {/* Purple glow */}
-                      <div className="absolute -inset-px bg-gradient-to-r from-purple-500/10 to-transparent blur-md pointer-events-none" />
-                      
-                      <div className="flex items-center justify-between">
-                        <span className="flex items-center gap-1.5 px-2 py-0.5 rounded bg-purple-500/15 border border-purple-500/30 text-purple-400 font-mono text-[9px] font-bold uppercase tracking-wider">
-                          <Zap size={10} className="fill-purple-400/20" /> Purple Sector
-                        </span>
-                        <span className="font-mono text-purple-400 font-black text-xs">
-                          {fastestLapDriver.fastestLapTime}
-                        </span>
-                      </div>
-
-                      <div className="space-y-0.5 mt-2">
-                        <h4 className="text-base font-black text-white font-mono leading-tight">
-                          {fastestLapDriver.firstName} {fastestLapDriver.lastName}
-                        </h4>
-                        <span className="text-[10px] font-mono font-bold block uppercase leading-none" style={{ color: fastestLapDriver.teamColor }}>
-                          {fastestLapDriver.teamName}
-                        </span>
-                      </div>
-
-                      <div className="border-t border-zinc-900 pt-2 flex justify-between font-mono text-[9px] text-zinc-500">
-                        <span>SET ON LAP: <strong className="text-zinc-300">{fastestLapDriver.fastestLapLap}</strong></span>
-                        <span>FINISHED: <strong className="text-zinc-300">P{fastestLapDriver.position}</strong></span>
-                      </div>
-                    </div>
-                  </div>
-                )}
-
-              </div>
-
-              {/* Race standings Table */}
-              <div className="bg-zinc-900/10 border border-zinc-900 rounded-xl overflow-hidden shadow-2xl">
-                <div className="overflow-x-auto">
-                  <table className="w-full text-left font-mono text-xs text-zinc-400">
-                    <thead className="bg-zinc-950 text-zinc-500 uppercase tracking-widest text-[9px] font-bold border-b border-zinc-900">
-                      <tr>
-                        <th className="py-4 px-6 text-center w-16">POS</th>
-                        <th className="py-4 px-4">DRIVER</th>
-                        <th className="py-4 px-4">CONSTRUCTOR</th>
-                        <th className="py-4 px-4 text-center w-20">GRID</th>
-                        <th className="py-4 px-4 text-center w-20">LAPS</th>
-                        <th className="py-4 px-4 text-center w-24">STATUS</th>
-                        <th className="py-4 px-4 text-center w-28">FAST LAP</th>
-                        <th className="py-4 px-6 text-right w-24">PTS</th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-zinc-900/60">
-                      {results.map((r) => (
-                        <tr key={r.driverId} className="hover:bg-zinc-900/30 transition-colors group">
-                          <td className="py-4 px-6 text-center font-bold text-zinc-300">
-                            {r.position}
-                          </td>
-                          <td className="py-4 px-4 font-bold text-zinc-200 group-hover:text-white transition-colors">
-                            <span className="text-zinc-500 text-[9px] mr-2 uppercase bg-zinc-950 border border-zinc-900 px-1 rounded">
-                              {r.number}
-                            </span>
-                            {r.firstName} {r.lastName}
-                          </td>
-                          <td className="py-4 px-4">
-                            <div className="flex items-center gap-2">
-                              <span className="w-1 h-3 rounded-sm block shrink-0" style={{ backgroundColor: r.teamColor }} />
-                              <span>{r.teamName}</span>
-                            </div>
-                          </td>
-                          <td className="py-4 px-4 text-center text-zinc-400">{r.grid}</td>
-                          <td className="py-4 px-4 text-center text-zinc-400">{r.laps}</td>
-                          <td className="py-4 px-4 text-center text-zinc-400">{r.status}</td>
-                          <td className="py-4 px-4 text-center font-bold text-zinc-300">
-                            {r.fastestLapTime || "--"}
-                          </td>
-                          <td className="py-4 px-6 text-right font-black text-white text-sm">
-                            {r.points > 0 ? `+${r.points}` : "0"}
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-            </>
-          ) : (
-            <div className="border border-zinc-900 rounded-xl p-8 text-center bg-zinc-900/10 backdrop-blur-sm max-w-sm mx-auto font-mono text-xs text-zinc-500">
-              <Flag size={20} className="mx-auto text-zinc-700 mb-3" />
-              <h4 className="text-zinc-400 font-bold uppercase mb-1">RACE DAY STANDBY</h4>
-              <p>Grand Prix standings will populate instantly upon checkers flag deployment.</p>
-            </div>
-          )}
-        </div>
+        <RaceAnalysis results={results} />
       )}
 
+      {activeTab === "insights" && (
+        <InsightsPanel results={results} />
+      )}
     </div>
   );
 }
