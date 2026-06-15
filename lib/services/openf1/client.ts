@@ -60,6 +60,13 @@ export async function fetchFromOpenF1<T>(
               continue;
             }
 
+            // Handle HTTP 404 Not Found (resolve as empty array)
+            if (res.status === 404) {
+              console.warn(`OpenF1 404 Not Found for [${endpoint}]. Returning empty array.`);
+              resolve([] as unknown as T);
+              return;
+            }
+
             if (!res.ok) {
               throw new Error(`OpenF1 API responded with status ${res.status}`);
             }

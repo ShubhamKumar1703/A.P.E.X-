@@ -7,7 +7,8 @@ import { OpenF1Session } from "./types";
 export async function getSessions(year?: number): Promise<OpenF1Session[]> {
   const filterYear = year || 2026;
   try {
-    return await fetchFromOpenF1<OpenF1Session[]>("/sessions", { year: filterYear });
+    const sessions = await fetchFromOpenF1<OpenF1Session[]>("/sessions", { year: filterYear });
+    return [...sessions].sort((a, b) => new Date(a.date_start).getTime() - new Date(b.date_start).getTime());
   } catch (err) {
     console.error("Failed to retrieve 2026 sessions:", err);
     return [];
