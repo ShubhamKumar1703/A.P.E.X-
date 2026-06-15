@@ -14,7 +14,7 @@ import QualifyingAnalysis from "@/components/race/QualifyingAnalysis";
 import RaceAnalysis from "@/components/race/RaceAnalysis";
 import InsightsPanel from "@/components/race/InsightsPanel";
 import RaceWeekendTimeline from "@/components/race/RaceWeekendTimeline";
-import { getBiggestGainer } from "@/lib/analytics/position-gain";
+
 
 import { 
   ArrowLeft, 
@@ -156,8 +156,7 @@ export default function RaceDetailsPage() {
   // Find driver with the fastest lap of the race
   const fastestLapDriver = hasResults ? results.find((r) => r.fastestLapRank === 1) : null;
 
-  // Telemetry Driver of the Day calculation (biggest gainer)
-  const dotdDriver = hasResults ? getBiggestGainer(results)?.driver : null;
+
 
   const getPodiumColor = (pos: number) => {
     if (pos === 1) return { border: "border-[#FFD700]/30", text: "text-[#FFD700]", bg: "bg-[#FFD700]/5", badge: "bg-[#FFD700]/10 border-[#FFD700]/30" };
@@ -240,7 +239,7 @@ export default function RaceDetailsPage() {
                   <span>WEEKEND HONORS & SUMMARY</span>
                 </div>
                 
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                   {/* Race Winner */}
                   <div className="bg-zinc-900/40 border border-zinc-900/60 rounded-lg p-3 flex items-center gap-3">
                     <span className="w-1.5 h-10 rounded shrink-0" style={{ backgroundColor: results[0]?.teamColor }} />
@@ -279,20 +278,6 @@ export default function RaceDetailsPage() {
                       </span>
                       <span className="text-[9px] text-purple-400 block truncate font-bold leading-none mt-0.5">
                         {fastestLapDriver ? fastestLapDriver.fastestLapTime : "N/A"}
-                      </span>
-                    </div>
-                  </div>
-
-                  {/* Driver of the Day */}
-                  <div className="bg-zinc-900/40 border border-zinc-900/60 rounded-lg p-3 flex items-center gap-3">
-                    <span className="w-1.5 h-10 rounded shrink-0" style={{ backgroundColor: dotdDriver?.teamColor || "#71717A" }} />
-                    <div className="min-w-0">
-                      <span className="text-[8px] text-zinc-500 block uppercase font-black tracking-wider">DRIVER OF THE DAY</span>
-                      <span className="text-xs font-black text-white block truncate leading-tight">
-                        {dotdDriver ? `${dotdDriver.firstName} ${dotdDriver.lastName}` : "N/A"}
-                      </span>
-                      <span className="text-[9px] text-zinc-400 block truncate leading-none uppercase mt-0.5" style={{ color: dotdDriver?.teamColor }}>
-                        {dotdDriver ? dotdDriver.teamName : "N/A"}
                       </span>
                     </div>
                   </div>
