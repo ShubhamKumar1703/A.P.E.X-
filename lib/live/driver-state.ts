@@ -135,11 +135,11 @@ export function aggregateDriverStates(
     let intervalAhead = "--";
     const position = 20; // fallback
 
-    // Check if driver is retired (interval data is older than session max by 3 minutes)
+    // Check if driver is retired (interval data is older than session max by 10 minutes)
     let isRetired = false;
     if (latestInterval && maxIntervalTime > 0) {
       const driverTime = new Date(latestInterval.date).getTime();
-      if (maxIntervalTime - driverTime > 180000) {
+      if (maxIntervalTime - driverTime > 600000) {
         isRetired = true;
       }
     }
