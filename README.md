@@ -1,9 +1,25 @@
-# A.P.E.X. — AI-Powered Formula 1 Race Intelligence
+<p align="center">
+  <img src="docs/banner.png" alt="A.P.E.X. Banner" />
+</p>
 
-[![Tech Stack](https://img.shields.io/badge/Tech_Stack-Next.js_15_--_TS_--_Tailwind-black?style=flat&logo=nextdotjs&logoColor=white)](#tech-stack)
-[![F1 Inspired](https://img.shields.io/badge/Inspired_By-Motorsport_Telemetry-FF1801?style=flat)](#brand-identity)
-[![Dark Mode](https://img.shields.io/badge/Theme-Dark_Mode_Only-zinc-950?style=flat)](#design-system)
-[![Status](https://img.shields.io/badge/Status-Phases_1--7_Complete-emerald-500?style=flat)](#development-roadmap)
+<h1 align="center">A.P.E.X.</h1>
+
+<p align="center">
+  Your Digital Race Engineer
+</p>
+
+<p align="center">
+  Live Telemetry • AI Race Engineer • Strategy Sandbox • Weather Intelligence
+</p>
+
+<p align="center">
+  <a href="#tech-stack"><img src="https://img.shields.io/badge/Tech_Stack-Next.js_15_--_TS_--_Tailwind-black?style=flat&logo=nextdotjs&logoColor=white" alt="Tech Stack" /></a>
+  <a href="#brand-identity"><img src="https://img.shields.io/badge/Inspired_By-Motorsport_Telemetry-FF1801?style=flat" alt="F1 Inspired" /></a>
+  <a href="#design-system"><img src="https://img.shields.io/badge/Theme-Dark_Mode_Only-zinc-950?style=flat" alt="Dark Mode" /></a>
+  <a href="#development-roadmap"><img src="https://img.shields.io/badge/Status-Phases_1--7_Complete-emerald-500?style=flat" alt="Status" /></a>
+</p>
+
+---
 
 A.P.E.X. (AI-Powered Race Intelligence) is a Formula 1 Mission Control platform that combines live telemetry, weather intelligence, deterministic strategy simulation, and an AI Race Engineer to recreate the decision-making environment of a modern Formula 1 pit wall.
 
@@ -11,9 +27,9 @@ A.P.E.X. (AI-Powered Race Intelligence) is a Formula 1 Mission Control platform 
 
 ## 🖥️ Live Demo
 
-**Coming Soon**
+Deployment in progress.
 
-The application is being prepared for public deployment. Once live, it can be accessed at:
+A public Vercel deployment will be available soon:
 [https://apex-raceiq.vercel.app](https://apex-raceiq.vercel.app)
 
 ---
@@ -36,6 +52,22 @@ The platform combines live telemetry, weather intelligence, strategy simulation,
 
 ---
 
+## 📷 Screenshots
+
+### Mission Control Landing Workstation
+![Mission Control Landing Workstation](docs/screenshots/landing-page.png)
+
+### Live Timing Center Dashboard
+![Live Timing Center Dashboard](docs/screenshots/live-timing.png)
+
+### AI Race Engineer Stream Terminal
+![AI Race Engineer Stream Terminal](docs/screenshots/ai-race-engineer.png)
+
+### Strategy Sandbox Cockpit Workspace
+![Strategy Sandbox Cockpit Workspace](docs/screenshots/strategy-sandbox.png)
+
+---
+
 ## ⚡ What Makes A.P.E.X. Different?
 
 * **✓ Deterministic Strategy Simulations**: Simulates pace curves, undercut success, and safety car windows using mathematical models first, rather than relying on generative AI hallucinated stats.
@@ -51,16 +83,27 @@ The platform combines live telemetry, weather intelligence, strategy simulation,
 
 ## ⚙️ Engineering Highlights
 
-Recruiters and developers reviewing this codebase will find deep technical implementations of real-time software systems:
+A.P.E.X. was designed as a real-time decision-support platform rather than a traditional sports dashboard. The project includes several production-style engineering patterns:
 * **Real-time OpenF1 Telemetry Aggregation**: Combines multi-stream timing data into state maps in real-time.
 * **FIFO Request Queue for API Rate Limiting**: Built a Promise Queue wrapper that enforces a strict `150ms` delay between OpenF1 requests, preventing 429 errors.
 * **Adaptive Polling Architecture**: Polls every 3s during active live sessions, 60s for upcoming races, and disables polling completely for historical completed races to save resources.
-* **Driver State Aggregation Engine**: Decoupled domain models that sorttiming boards, calculate lapped offsets, and handle retired/DNF classifications.
+* **Driver State Aggregation Engine**: Decoupled domain models that sort timing boards, calculate lapped offsets, and handle retired/DNF classifications.
 * **Weather Intelligence Pipeline**: Interpolates hourly data points into forecast increments (+15m, +30m, +60m) to map tyres wet-dry crossover boundaries.
 * **Deterministic Simulation Engine**: Implements non-linear tyre wear cliffs (quadratic decay curves) and undercut probability curves.
 * **AI Context Compression System**: Serializes timing gaps, standings, and model explanation payloads into compact, token-optimized LLM system prompts.
 * **Streaming LLM Responses with Groq**: Decodes Server-Sent Events (SSE) from Groq on-the-fly and filters out reasoning `<think>` tags before UI rendering.
 * **Strict TypeScript Architecture**: Written under strict compile checks with `0` type errors and `0` ESLint warnings.
+
+---
+
+## 🛡️ Key Challenges Solved
+
+* **Aggregating multiple OpenF1 streams into a unified driver state model**: Seamlessly joins high-frequency telemetry, tyre compounds, intervals, and pit stop streams.
+* **Preventing API rate limiting through FIFO request scheduling**: Designed a queued request scheduler preventing 429 status locks.
+* **Compressing race telemetry into token-efficient AI contexts**: Formats multi-driver spacing lists and tire histories into ultra-compact context builders.
+* **Combining deterministic simulation models with LLM-based explanations**: Exposes mathematical model arrays to the AI, ensuring logic explanation over numeric guesswork.
+* **Translating weather forecasts into race strategy intelligence**: Builds predictive weather metrics mapping track moisture variables to tire crossover windows.
+* **Maintaining responsive UI updates during live sessions**: Uses optimized state polling and React rendering optimizations to preserve high UI frames-per-second.
 
 ---
 
