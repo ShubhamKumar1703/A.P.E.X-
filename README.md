@@ -3,64 +3,110 @@
 [![Tech Stack](https://img.shields.io/badge/Tech_Stack-Next.js_15_--_TS_--_Tailwind-black?style=flat&logo=nextdotjs&logoColor=white)](#tech-stack)
 [![F1 Inspired](https://img.shields.io/badge/Inspired_By-Motorsport_Telemetry-FF1801?style=flat)](#brand-identity)
 [![Dark Mode](https://img.shields.io/badge/Theme-Dark_Mode_Only-zinc-950?style=flat)](#design-system)
-[![Status](https://img.shields.io/badge/Status-Phases_1--7_Complete-emerald-500?style=flat)](#roadmap)
+[![Status](https://img.shields.io/badge/Status-Phases_1--7_Complete-emerald-500?style=flat)](#development-roadmap)
 
-**A.P.E.X.** (AI-Powered Race Intelligence) is a premium, desktop-first Formula 1 Mission Control and strategy simulation platform. Designed to replicate a real-world racing team's telemetry workstation, A.P.E.X. integrates live timing feeds, high-frequency telemetry charting, tire degradation models, weather intelligence forecasts, and a Groq-powered AI Race Engineer to help you simulate and analyze race strategies.
+A.P.E.X. (AI-Powered Race Intelligence) is a Formula 1 Mission Control platform that combines live telemetry, weather intelligence, deterministic strategy simulation, and an AI Race Engineer to recreate the decision-making environment of a modern Formula 1 pit wall.
 
 ---
 
-## 🏎️ Completed Features by Phase
+## 🖥️ Live Demo
 
-### 1. Presentational Shell & Scaffolding (Phase 1)
-* **Motorsport Design System**: Monospace typography (Outfit/Fira Code), high-contrast Formula 1 Racing Red accents (`#FF1801`), card widgets, and micro-animations.
-* **Landing Page Workstation Mockup**: Recharts-powered throttle/brake/speed telemetry lines, static leaderboards, and interactive advisor advice cards.
+**Coming Soon**
 
-### 2. Live Calendar & Standing Hubs (Phase 2)
-* **TanStack Query F1 Service**: Integrates the Jolpica F1 API with global caching and error handling.
-* **Podium Standings**: Renders driver standings with a custom gold, silver, and bronze podium component, mapping constructors' brand styling colors dynamically.
-* **Constructor Roster**: Modern viewport mapping constructor points, victories, and team nationalities.
+The application is being prepared for public deployment. Once live, it can be accessed at:
+[https://apex-raceiq.vercel.app](https://apex-raceiq.vercel.app)
 
-### 3. Dynamic Race Weekend Hub (Phase 3 & 4)
-* **Circuit Database**: Profiles DRS zones, corners, records, and historic GP winners for all 24 calendar tracks.
-* **Pre- & Post-Race Layouts**:
-  * *Pre-Weekend*: Visualizes circuit profile data, practice/qualify timelines, and pre-race previews.
-  * *Post-Weekend*: Renders final qualifying sheets, race classification tables, fastest lap records (e.g. lap number and timing), and podium summaries.
-* **Session Intelligence Layer**: Calculates analytical performance metrics:
-  * **Recovery Drive Score**: Weights grid-to-finish position changes against starting grid difficulty.
-  * **Biggest Gainer/Loser**: Details net positions won/lost.
-  * **Closest Battles**: Evaluates timing intervals to isolate the tightest finish margins.
+---
 
-### 4. OpenF1 Live Timing Command Center (Phase 5)
-* **Real-time Telemetry Streams**: Fetches session states, timing boards, stints, pit stops, and race control alerts from `api.openf1.org`.
-* **High-DensityTiming Board**: Shows real-time intervals, tyre ages, pit counts, and highlights the session's fastest lap in purple.
-* **Stability Controls**:
-  * **Pacing FIFO Queue**: Enforces a `150ms` delay between OpenF1 fetch requests to prevent API 429 rate limit errors.
-  * **DNF Identification**: Automatically marks drivers as retired (DNF) and sorts them to the bottom if timing timestamps stall for over 10 minutes.
+## 📐 System Architecture
 
-### 5. AI Race Engineer (Phase 6)
-* **Groq Cloud Integration**: Establishes streaming strategy chat using Alibaba's `qwen/qwen3-32b` (Qwen 3 32B model) on Groq.
-* **Streaming Sanitizer**: Automatically parses and filters out reasoning tags (`<think>...</think>`) from the chat interface in real-time.
-* **Context Compiler**: Compresses timing gaps, tyre compounds, standings, and performance stats into LLM prompts.
+The following diagram illustrates the flow of real-time data from APIs, through processing and simulation layers, and into the AI Race Engineer and Cockpit UI:
 
-### 6. Weather Intelligence Layer (Phase 6.5)
-* **Open-Meteo Integration**: Maps F1 circuit coordinates to fetch real-time atmospheric, track, and rainfall forecast data.
-* **Strategy Weather Context**: Interpolates forecast weather offsets (`current`, `+15m`, `+30m`, `+60m`) to let the simulator evaluate dry-wet transition boundaries and pitstop timing windows.
+![A.P.E.X. System Flow & Pipeline Architecture](docs/architecture-diagram.svg)
 
-### 7. Interactive Strategy Sandbox (Phase 7)
-* **Deterministic Simulator**: Evaluates undercut probabilities, tyre cliff degradation, stop windows, and Safety Car pit delta gains using mathematical models.
-* **Exposed Explanation Payloads**: Standardizes all models to output numeric outputs alongside explanation arrays (`explanation: string[]`). The AI Race Engineer consumes these explanation payloads directly rather than reverse-engineering the score.
-* **Side-by-Side Cockpit Comparison**: Toggles and compares Scenario A (e.g. Dry Stint) and Scenario B (e.g. Rain Stint) overlays contrasting risk, tyre health, and finishing positions.
-* **Preset Persistence**: Supports naming, duplicating, resetting, and loading custom scenarios cached in `localStorage`.
+For a detailed breakdown of rate-limiting pacing, data models, and the context compiler, read the [System Flow Documentation](docs/system-flow.md).
+
+---
+
+## 🏎️ Why A.P.E.X.?
+
+Most Formula 1 applications provide data. **A.P.E.X. provides decision support.**
+
+The platform combines live telemetry, weather intelligence, strategy simulation, and AI-powered race engineering to recreate the high-pressure experience of a Formula 1 pit wall workstation. Rather than just viewing timing sheets, you are equipped with the models and intelligence necessary to evaluate undercut margins, track weather transitions, and make race-critical strategy calls.
+
+---
+
+## ⚡ What Makes A.P.E.X. Different?
+
+* **✓ Deterministic Strategy Simulations**: Simulates pace curves, undercut success, and safety car windows using mathematical models first, rather than relying on generative AI hallucinated stats.
+* **✓ Real-Time OpenF1 Telemetry**: Pulls live timing streams directly from F1 timing feeds.
+* **✓ Weather-Aware Race Intelligence**: Integrates Open-Meteo forecasts and interpolates weather metrics into high-resolution strategic time slots.
+* **✓ AI Race Engineer Powered by Groq**: Runs conversational strategy dialogue streaming with Alibaba's Qwen 32B model, stripping out reasoning thoughts on-the-fly.
+* **✓ Side-by-Side Strategy Comparisons**: Allows editing and contrasting two distinct paths (Scenario A vs. Scenario B) to isolate pace advantages.
+* **✓ Driver State Aggregation Engine**: Merges multiple timing and tyre streams into unified driver telemetry maps.
+* **✓ Race Control Integration**: Parses track flag status and lists live scrolling logs of race control notifications.
+* **✓ Live Tyre and Pit-Stop Tracking**: Monitors compound choices, stint ages, and pit stop durations.
+
+---
+
+## ⚙️ Engineering Highlights
+
+Recruiters and developers reviewing this codebase will find deep technical implementations of real-time software systems:
+* **Real-time OpenF1 Telemetry Aggregation**: Combines multi-stream timing data into state maps in real-time.
+* **FIFO Request Queue for API Rate Limiting**: Built a Promise Queue wrapper that enforces a strict `150ms` delay between OpenF1 requests, preventing 429 errors.
+* **Adaptive Polling Architecture**: Polls every 3s during active live sessions, 60s for upcoming races, and disables polling completely for historical completed races to save resources.
+* **Driver State Aggregation Engine**: Decoupled domain models that sorttiming boards, calculate lapped offsets, and handle retired/DNF classifications.
+* **Weather Intelligence Pipeline**: Interpolates hourly data points into forecast increments (+15m, +30m, +60m) to map tyres wet-dry crossover boundaries.
+* **Deterministic Simulation Engine**: Implements non-linear tyre wear cliffs (quadratic decay curves) and undercut probability curves.
+* **AI Context Compression System**: Serializes timing gaps, standings, and model explanation payloads into compact, token-optimized LLM system prompts.
+* **Streaming LLM Responses with Groq**: Decodes Server-Sent Events (SSE) from Groq on-the-fly and filters out reasoning `<think>` tags before UI rendering.
+* **Strict TypeScript Architecture**: Written under strict compile checks with `0` type errors and `0` ESLint warnings.
+
+---
+
+## 🗺️ Development Roadmap
+
+✅ **Phase 1** — Landing Experience
+
+✅ **Phase 2** — Calendar & Standings
+
+✅ **Phase 3** — Race Weekend Hub
+
+✅ **Phase 4** — Analytics Engine
+
+✅ **Phase 5** — Live Timing Center
+
+✅ **Phase 6** — AI Race Engineer
+
+✅ **Phase 6.5** — Weather Intelligence
+
+✅ **Phase 7** — Strategy Sandbox
+
+🚧 **Phase 8** — Race Story Mode
+
+📅 **Phase 9** — Predictive Analytics
+
+📅 **Phase 10** — Personal Race Engineer
+
+---
+
+## 🔌 Data Sources
+
+A.P.E.X. relies on a collection of open-source and high-performance APIs:
+* **OpenF1**: Real-time timing, tyre compounds, stints, and vehicle telemetry.
+* **Jolpica F1 API**: Historical race statistics, rounds calendar, and championship standings.
+* **Open-Meteo**: GPS-based circuit weather and moisture forecasts.
+* **Groq Cloud**: Real-time strategy dialogue stream running Qwen 32B.
 
 ---
 
 ## 🛠️ Tech Stack
 
 * **Framework**: [Next.js 15](https://nextjs.org/) (App Router, Node.js runtime)
-* **Language**: [TypeScript](https://www.typescriptlang.org/) (Strict mode compilation)
+* **Language**: [TypeScript](https://www.typescriptlang.org/)
 * **Styling**: [Tailwind CSS](https://tailwindcss.com/)
-* **State & Data**: [TanStack React Query v5](https://tanstack.com/query/latest) (5-minute stale timing rules)
-* **Charts**: [Recharts](https://recharts.org/) (High-frequency telemetry overlays)
+* **State & Data**: [TanStack React Query v5](https://tanstack.com/query/latest)
+* **Charts**: [Recharts](https://recharts.org/)
 * **Icons**: [Lucide React](https://lucide.dev/)
 
 ---
@@ -79,8 +125,6 @@ Follow these steps to run A.P.E.X. locally:
    Create a `.env` file in the root directory:
    ```env
    GROQ_API_KEY=your_groq_api_key_here
-   # Optional overrides:
-   # GROQ_MODEL=qwen/qwen3-32b
    ```
 
 3. **Install dependencies:**
@@ -94,14 +138,7 @@ Follow these steps to run A.P.E.X. locally:
    ```
 
 5. **Access the workstation:**
-   Open [http://localhost:3000](http://localhost:3000) in your browser. Navigating to `/dashboard/live` accesses live timing, and `/dashboard/sandbox` opens the strategy workbench.
-
----
-
-## 🏁 Verification & Build Audits
-
-* **Compilation**: `npx tsc --noEmit` returns zero compilation warnings or type conflicts.
-* **Linting**: `npx next lint` returns zero warnings or style violations (`✔ No ESLint warnings or errors`).
+   Open [http://localhost:3000](http://localhost:3000) in your browser.
 
 ---
 

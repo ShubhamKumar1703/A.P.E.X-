@@ -1,0 +1,252 @@
+<svg viewBox="0 0 1200 700" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+  <!-- Styles -->
+  <style>
+    .bg { fill: #09090b; }
+    .grid-line { stroke: #18181b; stroke-width: 1; stroke-dasharray: 4 4; }
+    .card { fill: #121214; stroke: #27272a; stroke-width: 1.5; rx: 12px; }
+    .card-highlight { stroke: #FF1801; stroke-width: 2; }
+    .card-ai { stroke: #3b82f6; stroke-width: 1.5; }
+    .card-data { stroke: #10b981; stroke-width: 1.5; }
+    .title-text { font-family: 'Outfit', 'Inter', system-ui, sans-serif; font-weight: 800; fill: #ffffff; font-size: 22px; letter-spacing: 0.05em; }
+    .subtitle-text { font-family: 'Fira Code', 'Courier New', monospace; font-weight: bold; fill: #a1a1aa; font-size: 10px; letter-spacing: 0.15em; }
+    .node-title { font-family: 'Outfit', 'Inter', system-ui, sans-serif; font-weight: bold; fill: #ffffff; font-size: 13px; }
+    .node-body { font-family: 'Fira Code', 'Courier New', monospace; fill: #71717a; font-size: 10px; }
+    .node-metric { font-family: 'Fira Code', 'Courier New', monospace; font-weight: bold; fill: #ff1801; font-size: 10px; }
+    .node-metric-blue { font-family: 'Fira Code', 'Courier New', monospace; font-weight: bold; fill: #3b82f6; font-size: 10px; }
+    .node-metric-green { font-family: 'Fira Code', 'Courier New', monospace; font-weight: bold; fill: #10b981; font-size: 10px; }
+    .arrow { stroke: #52525b; stroke-width: 1.5; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+    .arrow-active { stroke: #ff1801; stroke-width: 2; }
+    .arrow-data { stroke: #10b981; stroke-dasharray: 4 4; }
+    .arrow-blue { stroke: #3b82f6; stroke-dasharray: 4 4; }
+    .arrow-lbl { font-family: 'Fira Code', 'Courier New', monospace; fill: #52525b; font-size: 9px; font-weight: bold; text-anchor: middle; }
+    .glow { filter: drop-shadow(0px 0px 8px rgba(255, 24, 1, 0.25)); }
+    .glow-blue { filter: drop-shadow(0px 0px 8px rgba(59, 130, 246, 0.25)); }
+    .glow-green { filter: drop-shadow(0px 0px 8px rgba(16, 185, 129, 0.25)); }
+  </style>
+
+  <!-- Gradients & Markers -->
+  <defs>
+    <linearGradient id="grad-red" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FF1801" stop-opacity="0.8"/>
+      <stop offset="100%" stop-color="#990f00" stop-opacity="0.9"/>
+    </linearGradient>
+    <linearGradient id="grad-dark" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#18181b" stop-opacity="1"/>
+      <stop offset="100%" stop-color="#09090b" stop-opacity="1"/>
+    </linearGradient>
+    <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="8" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#52525b" />
+    </marker>
+    <marker id="arrowhead-red" markerWidth="10" markerHeight="7" refX="8" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#ff1801" />
+    </marker>
+    <marker id="arrowhead-blue" markerWidth="10" markerHeight="7" refX="8" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#3b82f6" />
+    </marker>
+    <marker id="arrowhead-green" markerWidth="10" markerHeight="7" refX="8" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#10b981" />
+    </marker>
+  </defs>
+
+  <!-- Background Layer -->
+  <rect width="100%" height="100%" class="bg" />
+
+  <!-- grid Lines -->
+  <line x1="100" y1="0" x2="100" y2="700" class="grid-line" />
+  <line x1="300" y1="0" x2="300" y2="700" class="grid-line" />
+  <line x1="550" y1="0" x2="550" y2="700" class="grid-line" />
+  <line x1="850" y1="0" x2="850" y2="700" class="grid-line" />
+  <line x1="1100" y1="0" x2="1100" y2="700" class="grid-line" />
+  <line x1="0" y1="100" x2="1200" y2="100" class="grid-line" />
+  <line x1="0" y1="360" x2="1200" y2="360" class="grid-line" />
+  <line x1="0" y1="580" x2="1200" y2="580" class="grid-line" />
+
+  <!-- Header Branding -->
+  <g transform="translate(40, 50)">
+    <rect x="0" y="0" width="30" height="30" rx="6" fill="#FF1801" class="glow" />
+    <path d="M7 23 L15 7 L23 23 Z" fill="#ffffff" />
+    <text x="42" y="18" class="title-text">A.P.E.X.<tspan fill="#ff1801">.</tspan></text>
+    <text x="42" y="29" class="subtitle-text">SYSTEM FLOW &amp; PIPELINE ARCHITECTURE</text>
+  </g>
+
+  <!-- ==================== COLUMN 1: DATA SOURCES ==================== -->
+  <g transform="translate(40, 130)">
+    <!-- Column Title -->
+    <text x="0" y="-15" class="subtitle-text" fill="#ff1801">01 // DATA PROVIDERS</text>
+
+    <!-- Source 1: OpenF1 API -->
+    <g transform="translate(0, 0)">
+      <rect width="210" height="100" class="card card-data glow-green" />
+      <!-- Dot -->
+      <circle cx="190" cy="22" r="5" fill="#10b981" />
+      <text x="20" y="32" class="node-title">OpenF1 API</text>
+      <text x="20" y="52" class="node-body">api.openf1.org/v1</text>
+      <text x="20" y="70" class="node-body">• Timing, Laps &amp; Stints</text>
+      <text x="20" y="85" class="node-body">• High-Frequency Telemetry</text>
+    </g>
+
+    <!-- Source 2: Jolpica F1 API -->
+    <g transform="translate(0, 130)">
+      <rect width="210" height="100" class="card card-data" />
+      <text x="20" y="32" class="node-title">Jolpica F1 API</text>
+      <text x="20" y="52" class="node-body">jolpica.proto.group</text>
+      <text x="20" y="70" class="node-body">• Standings &amp; Calendars</text>
+      <text x="20" y="85" class="node-body">• Historical Race Results</text>
+    </g>
+
+    <!-- Source 3: Open-Meteo API -->
+    <g transform="translate(0, 260)">
+      <rect width="210" height="100" class="card card-data glow-blue" />
+      <!-- Dot -->
+      <circle cx="190" cy="22" r="5" fill="#3b82f6" />
+      <text x="20" y="32" class="node-title">Open-Meteo API</text>
+      <text x="20" y="52" class="node-body">open-meteo.com</text>
+      <text x="20" y="70" class="node-body">• GPS Coordinate Weather</text>
+      <text x="20" y="85" class="node-body">• Real-Time &amp; Forecasts</text>
+    </g>
+  </g>
+
+  <!-- ==================== COLUMN 2: PROCESSING ENGINE ==================== -->
+  <g transform="translate(320, 130)">
+    <text x="0" y="-15" class="subtitle-text">02 // AGGREGATION &amp; CLASSIFICATION</text>
+
+    <!-- Driver State Aggregator -->
+    <g transform="translate(0, 0)">
+      <rect width="210" height="100" class="card" />
+      <text x="20" y="30" class="node-title">Driver State Engine</text>
+      <text x="20" y="52" class="node-body">lib/live/driver-state.ts</text>
+      <text x="20" y="70" class="node-body">• FIFO Pacing Queue (150ms)</text>
+      <text x="20" y="85" class="node-body">• Lapped &amp; DNF Classifiers</text>
+    </g>
+
+    <!-- Analytics Engine -->
+    <g transform="translate(0, 130)">
+      <rect width="210" height="100" class="card" />
+      <text x="20" y="30" class="node-title">Analytics Engine</text>
+      <text x="20" y="52" class="node-body">lib/analytics/*</text>
+      <text x="20" y="70" class="node-body">• Recovery Drive Score</text>
+      <text x="20" y="85" class="node-body">• Grid Delta &amp; Closest Battles</text>
+    </g>
+
+    <!-- Weather Forecast Pipeline -->
+    <g transform="translate(0, 260)">
+      <rect width="210" height="100" class="card" />
+      <text x="20" y="30" class="node-title">Weather Pipeline</text>
+      <text x="20" y="52" class="node-body">lib/services/weather/*</text>
+      <text x="20" y="70" class="node-body">• Linear Interpolation</text>
+      <text x="20" y="85" class="node-body">• +15m / +30m / +60m Slots</text>
+    </g>
+  </g>
+
+  <!-- ==================== COLUMN 3: STRATEGY SIMULATION ==================== -->
+  <g transform="translate(600, 130)">
+    <text x="0" y="-15" class="subtitle-text" fill="#ff1801">03 // SIMULATION WORKSTATION</text>
+
+    <!-- Strategy Sandbox -->
+    <g transform="translate(0, 0)">
+      <rect width="220" height="230" class="card card-highlight glow" />
+      <rect x="15" y="15" width="190" height="25" rx="4" fill="#ff1801" fill-opacity="0.1" />
+      <text x="25" y="32" class="node-title" fill="#ff1801">STRATEGY SANDBOX</text>
+      
+      <text x="20" y="65" class="node-title">Deterministic Models</text>
+      <text x="25" y="85" class="node-body">• Tyre Degradation (Quadratic)</text>
+      <text x="25" y="100" class="node-body">• Pit stop Window Limits</text>
+      <text x="25" y="115" class="node-body">• Undercut Probabilities</text>
+      <text x="25" y="130" class="node-body">• VSC / SC Time Savings</text>
+      
+      <rect x="15" y="150" width="190" height="65" rx="6" fill="#18181b" stroke="#27272a" />
+      <text x="25" y="168" class="node-title" fill="#10b981">EXPLANATION PAYLOADS</text>
+      <text x="25" y="186" class="node-body" fill="#a1a1aa">Numeric + Text vectors</text>
+      <text x="25" y="200" class="node-body" fill="#a1a1aa">e.g. explanation: string[]</text>
+    </g>
+
+    <!-- AI Context Builder -->
+    <g transform="translate(0, 260)">
+      <rect width="220" height="100" class="card" />
+      <text x="20" y="30" class="node-title">AI Context Builder</text>
+      <text x="20" y="52" class="node-body">lib/ai/sandbox-context.ts</text>
+      <text x="20" y="70" class="node-body">• Gaps &amp; Wear Serialization</text>
+      <text x="20" y="85" class="node-body">• Scenario A vs B Diffing</text>
+    </g>
+  </g>
+
+  <!-- ==================== COLUMN 4: AI BRAIN & CLIENT UI ==================== -->
+  <g transform="translate(900, 130)">
+    <text x="0" y="-15" class="subtitle-text">04 // ORCHESTRATION &amp; VIEW</text>
+
+    <!-- Groq AI Race Engineer -->
+    <g transform="translate(0, 0)">
+      <rect width="250" height="150" class="card card-ai glow-blue" />
+      <rect x="15" y="15" width="220" height="25" rx="4" fill="#3b82f6" fill-opacity="0.1" />
+      <text x="25" y="32" class="node-title" fill="#3b82f6">Groq AI Race Engineer</text>
+      
+      <text x="20" y="65" class="node-body">lib/ai/race-engineer.ts</text>
+      <text x="20" y="82" class="node-body">• Alibaba Qwen-3-32B Engine</text>
+      <text x="20" y="98" class="node-body">• Streaming SSE Parser</text>
+      <text x="20" y="114" class="node-body">• On-the-fly &lt;think&gt; Filter</text>
+      <text x="20" y="130" class="node-body">• Context compression rules</text>
+    </g>
+
+    <!-- A.P.E.X. UI Workstation -->
+    <g transform="translate(0, 180)">
+      <rect width="250" height="180" class="card" />
+      <text x="20" y="32" class="node-title">A.P.E.X. UI Workstation</text>
+      <text x="20" y="55" class="node-body">app/dashboard/sandbox/*</text>
+      
+      <text x="20" y="80" class="node-body" fill="#e4e4e7">🖥️ Dual-Scenario Editor</text>
+      <text x="20" y="98" class="node-body" fill="#e4e4e7">🖥️ Strategy Window Timeline</text>
+      <text x="20" y="116" class="node-body" fill="#e4e4e7">🖥️ Spec Comparison Card</text>
+      <text x="20" y="134" class="node-body" fill="#e4e4e7">🖥️ Streaming Chat Terminal</text>
+      <text x="20" y="155" class="node-body" fill="#ff1801">🖥️ 20-Driver Roster Grid</text>
+    </g>
+  </g>
+
+  <!-- ==================== FLOW CONNECTIONS ==================== -->
+
+  <!-- OpenF1 -> Driver State Engine -->
+  <path d="M250, 180 L320, 180" class="arrow" marker-end="url(#arrowhead-green)" />
+  <!-- Jolpica -> Analytics Engine -->
+  <path d="M250, 310 L320, 310" class="arrow" marker-end="url(#arrowhead)" />
+  <!-- Open-Meteo -> Weather Pipeline -->
+  <path d="M250, 440 L320, 440" class="arrow" marker-end="url(#arrowhead-blue)" />
+
+  <!-- Driver State Engine -> Strategy Sandbox -->
+  <path d="M530, 180 L600, 180" class="arrow" marker-end="url(#arrowhead)" />
+  
+  <!-- Analytics Engine -> Sandbox & context -->
+  <path d="M530, 310 L565, 310 L565, 250 L600, 250" class="arrow" marker-end="url(#arrowhead)" />
+  <path d="M565, 310 L565, 410 L600, 410" class="arrow" marker-end="url(#arrowhead)" />
+
+  <!-- Weather Pipeline -> Strategy Sandbox -->
+  <path d="M530, 440 L575, 440 L575, 300 L600, 300" class="arrow" marker-end="url(#arrowhead)" />
+
+  <!-- Strategy Sandbox -> AI Context Builder -->
+  <path d="M710, 360 L710, 390 L600, 390" class="arrow" marker-end="url(#arrowhead)" />
+  <path d="M710, 360 L710, 375 L600, 375" class="arrow" />
+
+  <!-- AI Context Builder -> Groq AI Race Engineer -->
+  <path d="M820, 410 L865, 410 L865, 205 L900, 205" class="arrow" marker-end="url(#arrowhead-blue)" />
+
+  <!-- Strategy Sandbox -> A.P.E.X. UI Workstation -->
+  <path d="M820, 245 L845, 245 L845, 370 L900, 370" class="arrow-active glow" marker-end="url(#arrowhead-red)" />
+  <text x="850" y="295" class="arrow-lbl" transform="rotate(-90 850 295)" fill="#ff1801">Precomputed metrics</text>
+
+  <!-- Groq AI Race Engineer -> A.P.E.X. UI Workstation (Chat window) -->
+  <path d="M1025, 280 L1025, 310" class="arrow" marker-end="url(#arrowhead)" />
+  <text x="1035" y="300" class="node-metric-blue">SSE Stream</text>
+
+  <!-- Legend -->
+  <g transform="translate(40, 610)">
+    <rect x="-10" y="-10" width="1090" height="50" rx="8" fill="#121214" stroke="#27272a" />
+    <circle cx="20" cy="15" r="5" fill="#10b981" />
+    <text x="32" y="19" class="node-body" fill="#10b981">Data Streams</text>
+    
+    <circle cx="160" cy="15" r="5" fill="#3b82f6" />
+    <text x="172" y="19" class="node-body" fill="#3b82f6">AI &amp; LLM Orchestration</text>
+    
+    <circle cx="360" cy="15" r="5" fill="#ff1801" />
+    <text x="372" y="19" class="node-body" fill="#ff1801">Strategy Sandbox &amp; Cockpit UI</text>
+
+    <text x="650" y="19" class="node-body" fill="#71717a">Strict TS Architecture Checklist: ✓ Types Checked  ✓ Lints audits verified  ✓ FIFO rate limits active</text>
+  </g>
+</svg>
