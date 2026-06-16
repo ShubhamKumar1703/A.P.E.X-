@@ -1,0 +1,74 @@
+<svg viewBox="0 0 800 500" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+  <style>
+    .bg { fill: #09090b; }
+    .card { fill: #121214; stroke: #27272a; stroke-width: 1; rx: 8px; }
+    .header-bar { fill: #18181b; stroke: #27272a; stroke-width: 1; }
+    .text-title { font-family: system-ui, sans-serif; font-weight: 800; fill: #ffffff; font-size: 13px; letter-spacing: 0.05em; }
+    .text-value { font-family: monospace; fill: #ffffff; font-size: 11px; font-weight: bold; }
+    .text-body { font-family: monospace; fill: #71717a; font-size: 9px; }
+    .badge-green { fill: #10b981; fill-opacity: 0.1; stroke: #10b981; stroke-width: 1; }
+  </style>
+
+  <rect width="100%" height="100%" class="bg" />
+
+  <!-- Control Header -->
+  <rect x="15" y="15" width="770" height="45" class="header-bar" rx="6" />
+  <circle cx="35" cy="37" r="4" fill="#ef4444" class="pulse" />
+  <text x="50" y="42" class="text-title">LIVE TIMING COMMAND // APEX WORKSTATION</text>
+  <text x="650" y="41" class="text-value" fill="#ef4444">CATALUNYA GRAND PRIX</text>
+
+  <!-- Left: timing Board -->
+  <g transform="translate(15, 75)">
+    <rect width="470" height="400" class="card" />
+    <text x="20" y="25" class="text-title">Timing board // Lap 42 / 66</text>
+    <text x="20" y="50" class="text-body">POS  DRV  TEAM       GAP        INTERVAL   TYRE  AGE   PIT</text>
+    <line x1="20" y1="58" x2="450" y2="58" stroke="#27272a" />
+
+    <!-- Driver Entries -->
+    <g transform="translate(20, 65)">
+      <text x="0" y="15" class="text-value" fill="#a855f7">1  HAM  MERCEDES   LEADER     -          M     12L   1</text>
+      <text x="0" y="35" class="text-value">2  VER  RED BULL   +1.512s    +1.512s    H     16L   1</text>
+      <text x="0" y="55" class="text-value">3  NOR  MCLAREN    +8.442s    +6.930s    M     22L   2</text>
+      <text x="0" y="75" class="text-value">4  LEC  FERRARI    +14.218s   +5.776s    S     4L    2</text>
+      <text x="0" y="95" class="text-value">5  PIA  MCLAREN    +16.510s   +2.292s    H     10L   1</text>
+      <text x="0" y="115" class="text-value">6  RUS  MERCEDES   +24.120s   +7.610s    M     15L   1</text>
+      <text x="0" y="135" class="text-value">7  SAI  FERRARI    +26.890s   +2.770s    H     25L   1</text>
+      <text x="0" y="155" class="text-value">8  ALO  ASTON M.   +38.120s   +11.230s   M     5L    2</text>
+    </g>
+  </g>
+
+  <!-- Right Top: Track Flag Status -->
+  <g transform="translate(500, 75)">
+    <rect width="285" height="100" class="card" />
+    <rect x="15" y="15" width="255" height="40" rx="4" class="badge-green" />
+    <text x="25" y="40" class="text-title" fill="#10b981">🟢 TRACK STATUS // CLEAR</text>
+    <text x="15" y="75" class="text-body">CURRENT ALERT CODE: NONE</text>
+    <text x="15" y="88" class="text-body">LATEST MESSAGE: Race Control - DRS Enabled</text>
+  </g>
+
+  <!-- Right Bottom: Tyre wear tracker -->
+  <g transform="translate(500, 190)">
+    <rect width="285" height="285" class="card" />
+    <text x="20" y="25" class="text-title">Tire degradation monitor</text>
+    
+    <g transform="translate(20, 50)">
+      <text x="0" y="15" class="text-body">HAM (Mercedes) - Medium Slicks</text>
+      <rect x="0" y="22" width="200" height="6" rx="3" fill="#18181b" />
+      <rect x="0" y="22" width="140" height="6" rx="3" fill="#eab308" />
+      <text x="210" y="28" class="text-value" fill="#eab350">70%</text>
+
+      <text x="0" y="65" class="text-body">VER (Red Bull) - Hard Slicks</text>
+      <rect x="0" y="72" width="200" height="6" rx="3" fill="#18181b" />
+      <rect x="0" y="72" width="160" height="6" rx="3" fill="#ffffff" />
+      <text x="210" y="78" class="text-value">80%</text>
+
+      <text x="0" y="115" class="text-body">NOR (McLaren) - Medium Slicks (Cliff Warning)</text>
+      <rect x="0" y="122" width="200" height="6" rx="3" fill="#18181b" />
+      <rect x="0" y="122" width="70" height="6" rx="3" fill="#ef4444" />
+      <text x="210" y="128" class="text-value" fill="#ef4444">35%</text>
+    </g>
+
+    <text x="20" y="225" class="text-body" fill="#ff1801">• Tyre cliff warnings active for: NOR, SAI</text>
+    <text x="20" y="242" class="text-body" fill="#10b981">• Wet tyres transition threshold: 45% moisture</text>
+  </g>
+</svg>

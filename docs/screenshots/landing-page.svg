@@ -1,0 +1,80 @@
+<svg viewBox="0 0 800 500" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+  <style>
+    .bg { fill: #0c0c0e; }
+    .header { fill: #18181b; stroke: #27272a; stroke-width: 1; }
+    .panel { fill: #121214; stroke: #27272a; stroke-width: 1; rx: 8px; }
+    .panel-highlight { stroke: #ff1801; stroke-width: 1.5; }
+    .text-title { font-family: system-ui, sans-serif; font-weight: bold; fill: #ffffff; font-size: 14px; }
+    .text-body { font-family: monospace; fill: #71717a; font-size: 10px; }
+    .text-value { font-family: monospace; fill: #ffffff; font-size: 11px; font-weight: bold; }
+    .chart-line-green { stroke: #10b981; stroke-width: 2; fill: none; }
+    .chart-line-red { stroke: #ff1801; stroke-width: 2; fill: none; }
+  </style>
+
+  <rect width="100%" height="100%" class="bg" />
+
+  <!-- Navbar -->
+  <rect x="10" y="10" width="780" height="40" class="header" rx="6" />
+  <circle cx="30" cy="30" r="8" fill="#ff1801" />
+  <text x="45" y="34" class="text-title">A.P.E.X.</text>
+  <text x="650" y="34" class="text-body" fill="#ff1801">RACE CONTROL ONLINE</text>
+
+  <!-- Left Column: Timing Leaderboard -->
+  <g transform="translate(10, 65)">
+    <rect width="240" height="420" class="panel" />
+    <text x="15" y="25" class="text-title">Timing board // Round 9</text>
+    
+    <!-- Table Headers -->
+    <text x="15" y="50" class="text-body">POS  DRIVER  GAP  INTERVAL  TYRES</text>
+    <line x1="15" y1="58" x2="225" y2="58" stroke="#27272a" />
+
+    <!-- Driver Rows -->
+    <g transform="translate(15, 65)">
+      <text x="0" y="15" class="text-value">1  VER  LEADER  -  S (4L)</text>
+      <text x="0" y="35" class="text-value">2  HAM  +1.240s  +1.240s  M (12L)</text>
+      <text x="0" y="55" class="text-value">3  NOR  +4.810s  +3.570s  M (15L)</text>
+      <text x="0" y="75" class="text-value">4  LEC  +6.920s  +2.110s  H (18L)</text>
+      <text x="0" y="95" class="text-value">5  PIA  +8.350s  +1.430s  M (8L)</text>
+      <text x="0" y="115" class="text-value">6  SAI  +12.440s  +4.090s  H (22L)</text>
+      <text x="0" y="135" class="text-value">7  RUS  +14.050s  +1.610s  S (3L)</text>
+      <text x="0" y="155" class="text-value">8  ALO  +18.110s  +4.060s  M (10L)</text>
+    </g>
+  </g>
+
+  <!-- Center Panel: Telemetry Charts -->
+  <g transform="translate(265, 65)">
+    <rect width="525" height="230" class="panel panel-highlight" />
+    <text x="20" y="25" class="text-title">Active Telemetry Preview</text>
+    
+    <!-- Chart Grid -->
+    <line x1="40" y1="50" x2="40" y2="200" stroke="#27272a" />
+    <line x1="40" y1="200" x2="500" y2="200" stroke="#27272a" />
+    <line x1="40" y1="125" x2="500" y2="125" stroke="#18181b" stroke-dasharray="2 2" />
+
+    <!-- Chart lines -->
+    <path d="M40 200 Q100 80, 200 60 T350 70 T500 80" class="chart-line-green" />
+    <path d="M40 180 Q120 180, 220 200 T370 190 T500 200" class="chart-line-red" />
+
+    <text x="410" y="25" class="text-body" fill="#10b981">● Throttle (Green)</text>
+    <text x="410" y="40" class="text-body" fill="#ff1801">● Brake (Red)</text>
+  </g>
+
+  <!-- Bottom Right: Advisor Stubs -->
+  <g transform="translate(265, 310)">
+    <rect width="250" height="175" class="panel" />
+    <text x="15" y="25" class="text-title">Strategy Insights</text>
+    <text x="15" y="55" class="text-body">HAMILTON OVERTAKE RATIO:</text>
+    <text x="15" y="70" class="text-value" fill="#10b981">68.2% Success Crossover</text>
+    <text x="15" y="105" class="text-body">ESTIMATED PIT LOSS DELTA:</text>
+    <text x="15" y="120" class="text-value">22.4s (Green flag)</text>
+  </g>
+
+  <g transform="translate(530, 310)">
+    <rect width="260" height="175" class="panel" />
+    <text x="15" y="25" class="text-title">Race Control Feed</text>
+    <rect x="15" y="45" width="230" height="30" rx="4" fill="#eab308" fill-opacity="0.1" stroke="#eab308" stroke-opacity="0.2" />
+    <text x="25" y="63" class="text-value" fill="#eab308">⚠️ FLAG YELLOW // SECTOR 2</text>
+    <text x="15" y="95" class="text-body" fill="#71717a">• 12:10:45 - Track Grip evolving</text>
+    <text x="15" y="115" class="text-body" fill="#71717a">• 12:08:12 - Bottas reported block flex</text>
+  </g>
+</svg>

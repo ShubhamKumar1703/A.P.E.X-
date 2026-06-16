@@ -1,0 +1,122 @@
+<svg viewBox="0 0 800 500" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+  <style>
+    .bg { fill: #09090b; }
+    .card { fill: #121214; stroke: #27272a; stroke-width: 1; rx: 8px; }
+    .card-a { fill: #121214; stroke: #ff1801; stroke-width: 1.5; rx: 8px; }
+    .card-b { fill: #121214; stroke: #3b82f6; stroke-width: 1.5; rx: 8px; }
+    .text-title { font-family: system-ui, sans-serif; font-weight: 800; fill: #ffffff; font-size: 13px; letter-spacing: 0.05em; }
+    .text-value { font-family: monospace; fill: #ffffff; font-size: 11px; font-weight: bold; }
+    .text-body { font-family: monospace; fill: #71717a; font-size: 9px; }
+    .timeline-bar { fill: #18181b; rx: 3px; }
+    .timeline-window { fill: #10b981; fill-opacity: 0.15; stroke: #10b981; stroke-width: 1; }
+  </style>
+
+  <rect width="100%" height="100%" class="bg" />
+
+  <!-- Layout Container -->
+  <!-- Top Title Bar -->
+  <rect x="15" y="15" width="770" height="40" fill="#18181b" stroke="#27272a" rx="4" />
+  <circle cx="35" cy="35" r="4" fill="#ff1801" />
+  <text x="50" y="39" class="text-title">STRATEGY SANDBOX WORKSTATION // DETERMINISTIC SIMULATIONS</text>
+
+  <!-- Left: Controls Panel (Scenario Editor) -->
+  <g transform="translate(15, 70)">
+    <rect width="250" height="415" class="card" />
+    <text x="20" y="25" class="text-title">Scenario Editor</text>
+    <line x1="20" y1="35" x2="230" y2="35" stroke="#27272a" />
+    
+    <!-- Tab Selector -->
+    <rect x="20" y="45" width="100" height="25" rx="4" fill="#ff1801" />
+    <text x="35" y="61" class="text-value" fill="#ffffff">Scenario A</text>
+    <rect x="130" y="45" width="100" height="25" rx="4" fill="#18181b" stroke="#27272a" />
+    <text x="145" y="61" class="text-value" fill="#a1a1aa">Scenario B</text>
+
+    <!-- Sliders -->
+    <g transform="translate(20, 85)">
+      <text x="0" y="15" class="text-body">CURRENT LAP (30/70)</text>
+      <line x1="0" y1="25" x2="210" y2="25" stroke="#27272a" stroke-width="4" stroke-linecap="round" />
+      <circle cx="90" cy="25" r="6" fill="#ff1801" />
+
+      <text x="0" y="65" class="text-body">TYRE STINT AGE (15 laps)</text>
+      <line x1="0" y1="75" x2="210" y2="75" stroke="#27272a" stroke-width="4" stroke-linecap="round" />
+      <circle cx="120" cy="75" r="6" fill="#ff1801" />
+
+      <text x="0" y="115" class="text-body">RAIN PROBABILITY (15%)</text>
+      <line x1="0" y1="125" x2="210" y2="125" stroke="#27272a" stroke-width="4" stroke-linecap="round" />
+      <circle cx="35" cy="125" r="6" fill="#ff1801" />
+
+      <text x="0" y="165" class="text-body">TARGET PIT LAP (Lap 38)</text>
+      <line x1="0" y1="175" x2="210" y2="175" stroke="#27272a" stroke-width="4" stroke-linecap="round" />
+      <circle cx="160" cy="175" r="6" fill="#ff1801" />
+    </g>
+
+    <!-- Preset CTAs -->
+    <g transform="translate(20, 310)">
+      <rect x="0" y="0" width="100" height="30" rx="4" fill="#ff1801" fill-opacity="0.1" stroke="#ff1801" stroke-width="1" />
+      <text x="18" y="18" class="text-value" fill="#ff1801">Save Preset</text>
+      <rect x="110" y="0" width="100" height="30" rx="4" fill="#18181b" stroke="#27272a" />
+      <text x="122" y="18" class="text-value" fill="#ffffff">Copy to B</text>
+    </g>
+  </g>
+
+  <!-- Center Right: Simulation Results Comparison -->
+  <g transform="translate(280, 70)">
+    <rect width="505" height="150" class="card" />
+    <text x="20" y="25" class="text-title">Scenario Comparison overlay</text>
+    
+    <g transform="translate(20, 45)">
+      <!-- Scenario A specs -->
+      <g transform="translate(0, 0)">
+        <rect width="220" height="85" class="card-a" fill="#ff1801" fill-opacity="0.02" />
+        <text x="15" y="22" class="text-value" fill="#ff1801">Dry Target One-Stop (A)</text>
+        <text x="15" y="45" class="text-body">Projected Finish: P3</text>
+        <text x="15" y="60" class="text-body">Tire Pace Loss: +0.240s/lap</text>
+        <text x="15" y="75" class="text-body">Risk Score: 15%</text>
+      </g>
+      
+      <!-- Scenario B specs -->
+      <g transform="translate(245, 0)">
+        <rect width="220" height="85" class="card-b" fill="#3b82f6" fill-opacity="0.02" />
+        <text x="15" y="22" class="text-value" fill="#3b82f6">Rain Stint Forecast (B)</text>
+        <text x="15" y="45" class="text-body">Projected Finish: P7</text>
+        <text x="15" y="60" class="text-body">Tire Pace Loss: +3.200s/lap</text>
+        <text x="15" y="75" class="text-body">Risk Score: 85%</text>
+      </g>
+    </g>
+  </g>
+
+  <!-- Center Right Bottom: Strategy timeline -->
+  <g transform="translate(280, 235)">
+    <rect width="505" height="110" class="card" />
+    <text x="20" y="25" class="text-title">Strategy Window Timeline</text>
+    
+    <g transform="translate(20, 50)">
+      <!-- Main Line -->
+      <rect width="465" height="8" rx="4" class="timeline-bar" />
+      
+      <!-- Window -->
+      <rect x="150" y="0" width="110" height="8" class="timeline-window" />
+      <text x="180" y="-8" class="text-body" fill="#10b981">Pit stop Window (L25-L38)</text>
+
+      <!-- Tick Indicators -->
+      <circle cx="80" cy="4" r="5" fill="#ffffff" />
+      <text x="60" y="24" class="text-value">Current L10</text>
+
+      <circle cx="200" cy="4" r="5" fill="#ff1801" />
+      <text x="175" y="24" class="text-value" fill="#ff1801">BOX L26</text>
+    </g>
+  </g>
+
+  <!-- Sandbox explanations list -->
+  <g transform="translate(280, 360)">
+    <rect width="505" height="125" class="card" />
+    <text x="20" y="22" class="text-title">Model Explanation Payloads</text>
+    
+    <g transform="translate(20, 42)">
+      <text x="0" y="15" class="text-body" fill="#ff1801">• Tyre Degradation: Ambient temperature is within optimal operating window.</text>
+      <text x="0" y="32" class="text-body" fill="#ff1801">• Undercut Window: Fresh tyre outlap delta gains 1.8s over staying out.</text>
+      <text x="0" y="49" class="text-body" fill="#10b981">• Weather Suitability: Dry compound slick tires are optimal for track surface.</text>
+      <text x="0" y="66" class="text-body" fill="#eab308">• Safety Car window: Free pit stop opportunity under SC saves 10s delta.</text>
+    </g>
+  </g>
+</svg>

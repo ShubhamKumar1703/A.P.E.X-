@@ -1,0 +1,76 @@
+<svg viewBox="0 0 1200 300" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+  <style>
+    .bg { fill: #09090b; }
+    .grid { stroke: #18181b; stroke-width: 1; stroke-dasharray: 5 5; }
+    .accent-line { stroke: #ff1801; stroke-width: 2; opacity: 0.8; }
+    .glow-red { filter: drop-shadow(0px 0px 10px rgba(255, 24, 1, 0.4)); }
+    .title { font-family: 'Outfit', 'Inter', system-ui, sans-serif; font-weight: 950; font-size: 80px; fill: #ffffff; letter-spacing: 0.1em; }
+    .dot { fill: #ff1801; }
+    .subtitle { font-family: 'Fira Code', 'Courier New', monospace; font-weight: bold; font-size: 14px; fill: #71717a; letter-spacing: 0.3em; }
+    .hud-text { font-family: 'Fira Code', 'Courier New', monospace; font-size: 10px; fill: #3f3f46; }
+    .hud-green { fill: #10b981; }
+    .hud-blue { fill: #3b82f6; }
+    .hud-yellow { fill: #eab308; }
+  </style>
+
+  <!-- Background -->
+  <rect width="100%" height="100%" class="bg" />
+
+  <!-- Grid Pattern -->
+  <g class="grid">
+    <line x1="100" y1="0" x2="100" y2="300" />
+    <line x1="200" y1="0" x2="200" y2="300" />
+    <line x1="300" y1="0" x2="300" y2="300" />
+    <line x1="400" y1="0" x2="400" y2="300" />
+    <line x1="500" y1="0" x2="500" y2="300" />
+    <line x1="600" y1="0" x2="600" y2="300" />
+    <line x1="700" y1="0" x2="700" y2="300" />
+    <line x1="800" y1="0" x2="800" y2="300" />
+    <line x1="900" y1="0" x2="900" y2="300" />
+    <line x1="1000" y1="0" x2="1000" y2="300" />
+    <line x1="1100" y1="0" x2="1100" y2="300" />
+    <line x1="0" y1="75" x2="1200" y2="75" />
+    <line x1="0" y1="150" x2="1200" y2="150" />
+    <line x1="0" y1="225" x2="1200" y2="225" />
+  </g>
+
+  <!-- HUD Telemetry Graphs (Left Side) -->
+  <g transform="translate(50, 40)" opacity="0.35">
+    <rect width="200" height="80" fill="none" stroke="#27272a" stroke-width="1" rx="4" />
+    <path d="M10 70 L40 50 L70 60 L100 20 L130 55 L160 30 L190 65" fill="none" stroke="#10b981" stroke-width="1.5" />
+    <text x="15" y="20" class="hud-text hud-green">SYS.TELEMETRY.CH1 // ACTIVE</text>
+    <text x="150" y="20" class="hud-text">88.2%</text>
+  </g>
+  <g transform="translate(50, 140)" opacity="0.35">
+    <rect width="200" height="80" fill="none" stroke="#27272a" stroke-width="1" rx="4" />
+    <path d="M10 30 L40 60 L70 30 L100 70 L130 40 L160 60 L190 20" fill="none" stroke="#3b82f6" stroke-width="1.5" />
+    <text x="15" y="20" class="hud-text hud-blue">SYS.WEATHER.CH2 // DRY</text>
+    <text x="150" y="20" class="hud-text">12.4ms</text>
+  </g>
+
+  <!-- Central Branding & Logo (Glowing) -->
+  <g class="glow-red" transform="translate(450, 110)">
+    <text x="0" y="70" class="title">A.P.E.X<tspan class="dot">.</tspan></text>
+    <text x="5" y="105" class="subtitle">AI RACE ENGINEERING</text>
+  </g>
+
+  <!-- Decorative Corner Accents -->
+  <path d="M10,20 L10,10 L20,10" fill="none" stroke="#ff1801" stroke-width="2" class="glow-red" />
+  <path d="M1190,20 L1190,10 L1180,10" fill="none" stroke="#ff1801" stroke-width="2" class="glow-red" />
+  <path d="M10,280 L10,290 L20,290" fill="none" stroke="#ff1801" stroke-width="2" class="glow-red" />
+  <path d="M1190,280 L1190,290 L1180,290" fill="none" stroke="#ff1801" stroke-width="2" class="glow-red" />
+
+  <!-- Right Side HUD (Timing Tower simulation) -->
+  <g transform="translate(950, 40)" opacity="0.4">
+    <rect width="200" height="180" fill="none" stroke="#27272a" stroke-width="1" rx="4" />
+    <text x="15" y="22" class="hud-text" fill="#ffffff">Timing board // Q3</text>
+    <line x1="15" y1="30" x2="185" y2="30" stroke="#27272a" />
+    
+    <text x="15" y="50" class="hud-text">1  VER  1:11.520</text>
+    <text x="15" y="70" class="hud-text" fill="#ff1801">2  HAM  +0.082s</text>
+    <text x="15" y="90" class="hud-text">3  NOR  +0.120s</text>
+    <text x="15" y="110" class="hud-text">4  LEC  +0.210s</text>
+    <text x="15" y="130" class="hud-text">5  PIA  +0.354s</text>
+    <text x="15" y="150" class="hud-text">6  RUS  +0.410s</text>
+  </g>
+</svg>

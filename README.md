@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="docs/banner.png" alt="A.P.E.X. Banner" />
+  <img src="docs/banner.svg" alt="A.P.E.X. Banner" />
 </p>
 
 <h1 align="center">A.P.E.X.</h1>
@@ -15,8 +15,8 @@
 <p align="center">
   <a href="#tech-stack"><img src="https://img.shields.io/badge/Tech_Stack-Next.js_15_--_TS_--_Tailwind-black?style=flat&logo=nextdotjs&logoColor=white" alt="Tech Stack" /></a>
   <a href="#brand-identity"><img src="https://img.shields.io/badge/Inspired_By-Motorsport_Telemetry-FF1801?style=flat" alt="F1 Inspired" /></a>
-  <a href="#design-system"><img src="https://img.shields.io/badge/Theme-Dark_Mode_Only-zinc-950?style=flat" alt="Dark Mode" /></a>
-  <a href="#development-roadmap"><img src="https://img.shields.io/badge/Status-Phases_1--7_Complete-emerald-500?style=flat" alt="Status" /></a>
+  <a href="#design-system"><img src="https://img.shields.io/badge/Theme-Dark_Mode_Only-09090b?style=flat" alt="Dark Mode" /></a>
+  <a href="#development-roadmap"><img src="https://img.shields.io/badge/Status-Phases_1--7_Complete-10b981?style=flat" alt="Status" /></a>
 </p>
 
 ---
@@ -55,16 +55,16 @@ The platform combines live telemetry, weather intelligence, strategy simulation,
 ## 📷 Screenshots
 
 ### Mission Control Landing Workstation
-![Mission Control Landing Workstation](docs/screenshots/landing-page.png)
+![Mission Control Landing Workstation](docs/screenshots/landing-page.svg)
 
 ### Live Timing Center Dashboard
-![Live Timing Center Dashboard](docs/screenshots/live-timing.png)
+![Live Timing Center Dashboard](docs/screenshots/live-timing.svg)
 
 ### AI Race Engineer Stream Terminal
-![AI Race Engineer Stream Terminal](docs/screenshots/ai-race-engineer.png)
+![AI Race Engineer Stream Terminal](docs/screenshots/ai-race-engineer.svg)
 
 ### Strategy Sandbox Cockpit Workspace
-![Strategy Sandbox Cockpit Workspace](docs/screenshots/strategy-sandbox.png)
+![Strategy Sandbox Cockpit Workspace](docs/screenshots/strategy-sandbox.svg)
 
 ---
 
